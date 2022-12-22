@@ -1,16 +1,13 @@
 # ik8_otus_food
+Проект по домашнему заданию OTUS.
 
-A new Flutter project.
+## Зазача
+Создать виджет страницы со списком рецептов с использованием прокручиваемых виджетов, виджетов текста, изображения и пиктограмм в соответствии с дизайном в Figma.
+    -   Подготовить структуру данных для хранения элемента списка рецептов
+    -   Загрузить изображения (в assets/images) для визуализации рецептов
+    -   Создать тестовые данные для списка рецептов
+    -   Создать виджет для отображения одного элемента из списка рецептов (изображение, название, значок таймера и время приготовление)
+    -   Создать страницу (запуск из main) для отображения прокручиваемого списка рецептов, добавить анимацию overscroll
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Вопросы
+Несовсем понятны требования к верстке элемента списка, точнее к изображению списка. Пришлось пока использовать IntrinsicHeight.
