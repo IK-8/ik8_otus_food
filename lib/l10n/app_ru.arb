@@ -1,0 +1,11 @@
+{
+  "hourOther":"$param часов",
+  "hourFew":"$param часа",
+  "hourOne":"$param час",
+  "minuteOther":"$param минут",
+  "minuteFew":"$param минуты",
+  "minuteOne":"$param минута",
+  "secondOther":"$param секунд",
+  "secondFew":"$param секунды",
+  "secondOne":"$param секунда"
+}
