@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../config/theme/main.dart';
 import '../../../domain/repositories/recipe_repository.dart';
 import '../../widgets/widgets.dart';
+import 'current.dart';
 
 class RecipeListView extends StatelessWidget {
   final RecipeRepository _repository;
@@ -14,6 +15,7 @@ class RecipeListView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
+        backgroundColor: backgroundColor,
         systemOverlayStyle: transparentSystemOverlayStyle,
         elevation: 0,
       ),
@@ -23,9 +25,14 @@ class RecipeListView extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         itemBuilder: (BuildContext context, int index) {
           var item = list[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
-            child: RecipeItem(item),
+          return GestureDetector(
+            onTap: (){
+              Navigator.push(context, CurrentRecipePage.route(item));
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: RecipeItem(item),
+            ),
           );
         },
       ),

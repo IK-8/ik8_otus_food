@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 const primaryColor = Color.fromRGBO(46, 204, 113, 1.0);
+const primaryDarkColor = Color(0xff165932);
 const backgroundColor = Color(0xffECECEC);
 final primaryMaterial = MaterialColor(
   const Color.fromRGBO(46, 204, 113, 1.0).value,
@@ -19,10 +20,23 @@ final primaryMaterial = MaterialColor(
   },
 );
 final theme = ThemeData(
-  primarySwatch: primaryMaterial,
-  backgroundColor: backgroundColor,
-  scaffoldBackgroundColor: backgroundColor,
-);
+    primarySwatch: primaryMaterial,
+    backgroundColor: Colors.white,
+    scaffoldBackgroundColor: Colors.white,
+    appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.white,
+        titleTextStyle: TextStyle(color: primaryDarkColor, fontSize: 20),
+        centerTitle: true,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        )),
+    textTheme: const TextTheme(
+        titleMedium: TextStyle(
+            color: primaryDarkColor,
+            fontSize: 16,
+            fontWeight: FontWeight.w500)));
 
 const transparentSystemOverlayStyle = SystemUiOverlayStyle(
   statusBarColor: backgroundColor,

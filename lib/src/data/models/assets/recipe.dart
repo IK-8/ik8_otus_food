@@ -5,7 +5,8 @@ class AssetRecipe extends Recipe {
       {required super.image,
       required super.title,
       required super.seconds,
-      super.steps= const [],
+      super.ingredients = const [],
+      super.steps = const [],
       super.isFavorite,
       super.isStarted,
       super.comments = const []});
