@@ -10,4 +10,16 @@ class RecipeRepositoryImpl extends RecipeRepository {
 
   @override
   List<Recipe> get all => _service.all;
+
+  @override
+  void setFavorite(int id,
+      {required bool isFavorite, required Function(Recipe recipe) onChange}) {
+    _service.setFavorite(id, isFavorite: isFavorite, onChange: onChange);
+  }
+
+  @override
+  void start(int id,
+      {required bool isStarted, required Function(Recipe recipe) onChange}) {
+    _service.start(id, isStarted: isStarted, onChange: onChange);
+  }
 }

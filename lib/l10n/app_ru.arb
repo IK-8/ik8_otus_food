@@ -7,5 +7,19 @@
   "minuteOne":"$param минута",
   "secondOther":"$param секунд",
   "secondFew":"$param секунды",
-  "secondOne":"$param секунда"
+  "secondOne":"$param секунда",
+  "toTaste":"по вкусу",
+  "kg":"кг",
+  "g":"г",
+  "pcs":"шт.",
+  "one_tsp":"ч. ложка",
+  "few_tsp":"ч. ложки",
+  "many_tsp":"ч. ложек",
+  "one_tbs":"ст. ложка",
+  "few_tbs":"ст. ложки",
+  "many_tbs":"ст. ложек",
+  "one_clove":"забчика",
+  "few_clove":"зубчика",
+  "many_clove":"зубчиков"
+
 }

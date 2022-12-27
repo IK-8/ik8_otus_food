@@ -1,5 +1,5 @@
-enum IngredientMeasure {
-  /// грамм
+enum Measure {
+  /// килограмм
   wt,
 
   /// штук
@@ -13,4 +13,13 @@ enum IngredientMeasure {
 
   /// долька
   clove
+}
+
+class IngredientMeasure {
+  final Measure? type;
+  final String? title;
+
+  const IngredientMeasure(this.type) : title = null;
+
+  const IngredientMeasure.custom(String this.title) : type = null;
 }
