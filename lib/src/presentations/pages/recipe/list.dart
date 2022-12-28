@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../config/theme/main.dart';
 import '../../../domain/repositories/recipe_repository.dart';
 import '../../widgets/widgets.dart';
-import 'current.dart';
+import 'current/current.dart';
 
 class RecipeListView extends StatelessWidget {
   final RecipeRepository _repository;
