@@ -1,10 +1,13 @@
+import 'package:ik8_otus_food/src/data/datasources/assets/comments.dart';
 import 'package:ik8_otus_food/src/data/models/assets/recipe.dart';
 import 'package:ik8_otus_food/src/domain/entities/measure.dart';
 import 'package:ik8_otus_food/src/domain/entities/recipe.dart';
+import 'package:ik8_otus_food/src/domain/entities/recipe_info.dart';
 
 import '../../models/assets/ingredient.dart';
 import '../../models/assets/product.dart';
 import '../../models/assets/step.dart';
+import 'steps.dart';
 
 class AssetRecipeService {
   static final _all = <AssetRecipe>[
@@ -65,49 +68,6 @@ class AssetRecipeService {
           AssetIngredient(
               product: AssetProduct(
                   measure: const IngredientMeasure(null), name: 'Кунжут')),
-        ],
-        steps: [
-          const AssetRecipeStep(
-            id: 0,
-            title:
-                'В маленькой кастрюле соедините соевый соус, 6 столовых ложек воды, мёд, сахар, измельчённый чеснок, имбирь и лимонный сок.',
-            seconds: 60 * 6,
-          ),
-          const AssetRecipeStep(
-            id: 1,
-            title:
-                'Поставьте на средний огонь и, помешивая, доведите до лёгкого кипения.',
-            seconds: 60 * 7,
-          ),
-          const AssetRecipeStep(
-            id: 2,
-            title:
-                'Смешайте оставшуюся воду с крахмалом. Добавьте в кастрюлю и перемешайте.',
-            seconds: 60 * 6,
-          ),
-          const AssetRecipeStep(
-            id: 3,
-            title:
-                'Готовьте, непрерывно помешивая венчиком, 1 минуту. Снимите с огня и немного остудите.',
-            seconds: 60 * 1,
-          ),
-          const AssetRecipeStep(
-            id: 4,
-            title:
-                'Смажьте форму маслом и выложите туда рыбу. Полейте её соусом.',
-            seconds: 60 * 6,
-          ),
-          const AssetRecipeStep(
-            id: 5,
-            title:
-                'Поставьте в разогретую до 200 °C духовку примерно на 15 минут.',
-            seconds: 60 * 15,
-          ),
-          const AssetRecipeStep(
-            id: 6,
-            title: 'Перед подачей полейте соусом из формы и посыпьте кунжутом.',
-            seconds: 60 * 4,
-          ),
         ]),
     const AssetRecipe(
       id: 1,
@@ -149,22 +109,58 @@ class AssetRecipeService {
 
   List<AssetRecipe> get all => _all;
 
+  static AssetRecipe _byId(int id) =>
+      _all.firstWhere((element) => element.id == id);
+
+  final AssetRecipeStepService _stepService;
+  final AssetRecipeCommentsService _commentsService;
+
+  AssetRecipeService(this._stepService, this._commentsService);
+
   void setFavorite(int id,
       {required bool isFavorite,
-      required Function(AssetRecipe recipe) onChange}) {
+      required Function(RecipeInfo recipe) onChange}) {
     final find = _all.firstWhere((element) => element.id == id);
     final index = _all.indexOf(find);
     final copy = find.copyWith(isFavorite: isFavorite);
     _all[index] = copy;
-    onChange(copy);
+    onChange(getInfo(id));
   }
 
   void start(int id,
-      {required bool isStarted, required Function(Recipe recipe) onChange}) {
+      {required bool isStarted,
+      required Function(RecipeInfo recipe) onChange}) {
     final find = _all.firstWhere((element) => element.id == id);
     final index = _all.indexOf(find);
+    if (isStarted == false) {
+      _stepService.setCheckedByRecipe(id, false);
+    }
     final copy = find.copyWith(isStarted: isStarted);
     _all[index] = copy;
-    onChange(copy);
+    onChange(getInfo(id));
+  }
+
+  RecipeInfo getInfo(int id) {
+    return RecipeInfo(
+      recipe: _byId(id),
+      steps: _stepService.byRecipe(id),
+      comments: _commentsService.byRecipe(id),
+    );
+  }
+
+  void create(
+      {required int recipeId,
+      required String text,
+      required Function(RecipeInfo recipe) onChange}) {
+    _commentsService.create(recipeId: recipeId, text: text);
+    onChange(getInfo(recipeId));
+  }
+
+  void setStepChecked(int stepId,
+      {required int recipeId,
+      required bool isChecked,
+      required Function(RecipeInfo recipe) onChange}) {
+    _stepService.setChecked(stepId, isChecked);
+    onChange(getInfo(recipeId));
   }
 }

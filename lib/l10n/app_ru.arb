@@ -20,6 +20,9 @@
   "many_tbs":"ст. ложек",
   "one_clove":"забчика",
   "few_clove":"зубчика",
-  "many_clove":"зубчиков"
+  "many_clove":"зубчиков",
+  "ingredientsTitle":"Ингредиенты",
+  "cookingStepsTitle":"Шаги приготовления",
+  "recipeTitle":"Рецепт"
 
 }

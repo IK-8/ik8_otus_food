@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:ik8_otus_food/src/domain/entities/recipe.dart';
 import 'package:ik8_otus_food/src/injector.dart';
 import 'package:ik8_otus_food/src/presentations/widgets/recipe_step/item.dart';
+import '../../../../l10n/extension.dart';
+import '../../../domain/entities/recipe_info.dart';
+import '../../../domain/usecase/recipe/create_comment.dart';
+import '../../../domain/usecase/recipe/info.dart';
+import '../../../domain/usecase/recipe/set_checked_step.dart';
 import '../../../domain/usecase/recipe/set_favorite.dart';
 import '../../../domain/usecase/recipe/start.dart';
 import '../../widgets/ingredient/table.dart';
@@ -21,7 +26,11 @@ class CurrentRecipePage extends StatefulWidget {
 }
 
 class _CurrentRecipePageState extends State<CurrentRecipePage> {
-  late Recipe data = widget.data;
+  late RecipeInfo data = getInfo();
+
+  RecipeInfo getInfo() {
+    return injector<GetRecipeInfoUseCase>().call(widget.data.id);
+  }
 
   onChangeFavorite(bool isFavorite) {
     injector<SetFavoriteRecipeUseCase>().call(
@@ -45,101 +54,292 @@ class _CurrentRecipePageState extends State<CurrentRecipePage> {
         });
   }
 
+  onCheckedStep(int stepId, bool isChecked) {
+    injector<SetCheckedRecipeStepUseCase>().call(
+        id: stepId,
+        recipeId: data.id,
+        isChecked: isChecked,
+        onChange: (data) {
+          setState(() {
+            this.data = data;
+          });
+        });
+  }
+
+  createComment(String text) {
+    injector<CreateRecipeCommentUseCase>().call(
+        recipeId: data.id,
+        text: text,
+        onChange: (data) {
+          setState(() {
+            this.data = data;
+          });
+        });
+  }
+
+  bool setFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    commentFocus.addListener(() {
+      if (commentFocus.hasFocus) {
+        setFocused = true;
+      } else if (setFocused) {
+        setFocused = false;
+      }
+    });
+  }
+
+  var commentController = TextEditingController();
+  var commentFocus = FocusNode();
+  var scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
+    var bottom = MediaQuery
+        .of(context)
+        .viewInsets
+        .bottom;
+    final keyboardIsOpened = bottom != 0.0;
     return Scaffold(
       appBar: AppBar(
+        leading: !keyboardIsOpened
+            ? null
+            : IconButton(
+          onPressed: () {
+            FocusScopeNode currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+          },
+          icon: const Icon(Icons.done),
+        ),
         title: const Text('Рецепт'),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      body: Column(
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Flexible(
-                fit: FlexFit.tight,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0, top: 8),
-                      child: Text(widget.data.title,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 24)),
+          Expanded(
+              child: ListView(
+                // physics: const ClampingScrollPhysics(),
+                controller: scrollController,
+
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        fit: FlexFit.tight,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding:
+                              const EdgeInsets.only(bottom: 16.0, top: 8),
+                              child: Text(widget.data.title,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 24)),
+                            ),
+                            DurationView(widget.data.seconds),
+                          ],
+                        ),
+                      ),
+                      FavoriteButton(
+                        onChanged: onChangeFavorite,
+                        value: data.recipe.isFavorite,
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: AspectRatio(
+                        aspectRatio: 2,
+                        child: Image.asset(
+                          widget.data.image,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
-                    DurationView(widget.data.seconds),
+                  ),
+                  if (data.recipe.ingredients.isNotEmpty) ...[
+                    Text(
+                      AppLocalizations.of(context)!.ingredientsTitle,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .titleMedium,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: IngredientTable(
+                        list: data.recipe.ingredients,
+                      ),
+                    )
                   ],
-                ),
-              ),
-              FavoriteButton(
-                onChanged: onChangeFavorite,
-                value: data.isFavorite,
-              )
-            ],
-          ),
+                  if (data.steps.isNotEmpty) ...[
+                    Text(
+                      AppLocalizations.of(context)!.cookingStepsTitle,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .titleMedium,
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    for (int i = 0; i < data.steps.length; i++)
+                      RecipeStepItem(
+                        index: i + 1,
+                        enabled: data.recipe.isStarted,
+                        onSelect: (isSelect) {
+                          onCheckedStep(data.steps[i].id, isSelect);
+                        },
+                        item: data.steps[i],
+                      ),
+                  ],
+                  Center(
+                    child: ToggleOutlineFilledButton(
+                      outlinedLabel: 'Закончить готовить',
+                      filledLabel: 'Начать готовить',
+                      outlined: data.recipe.isStarted,
+                      onPressed: (bool value) {
+                        onStart(value);
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  const Divider(
+                    color: Color(0xff797676),
+                  ),
+                  for (var comment in data.comments)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!
+                                .ddMMyyFormat(comment.time),
+                            // comment.time.toString(),
+                            style: const TextStyle(
+                                color: Color(0xffC2C2C2),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            comment.text,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
+                    ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  if (!keyboardIsOpened)
+                    Container(
+                      key: key,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: const Color(0xff165932),
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      padding: const EdgeInsets.all(8),
+                      child: Row(
+                        children: [
+                          Flexible(
+                            fit: FlexFit.tight,
+                            child: TextFormField(
+                              focusNode: commentFocus,
+                              decoration: const InputDecoration(
+                                  hintText: 'оставить комментарий',
+                                  helperStyle:
+                                  TextStyle(color: Color(0xffC2C2C2)),
+                                  border: InputBorder.none),
+                              maxLines: 3,
+                              controller: commentController,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              var text = commentController.text.trim();
+                              if (text.isNotEmpty) {
+                                commentController.clear();
+                                createComment(text);
+                              }
+                            },
+                            icon: const Icon(Icons.near_me_rounded),
+                          )
+                        ],
+                      ),
+                    ),
+                  // SizedBox(
+                  //   height: bottom,
+                  // )
+                ],
+
+              )),
+              if (keyboardIsOpened)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: AspectRatio(
-                aspectRatio: 2,
-                child: Image.asset(
-                  widget.data.image,
-                  fit: BoxFit.cover,
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              key: key,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: const Color(0xff165932),
+                  width: 2,
                 ),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: TextFormField(
+                      focusNode: commentFocus,
+                      decoration: const InputDecoration(
+                          hintText: 'оставить комментарий',
+                          helperStyle: TextStyle(color: Color(0xffC2C2C2)),
+                          border: InputBorder.none),
+                      maxLines: 3,
+                      controller: commentController,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      var text = commentController.text.trim();
+                      if (text.isNotEmpty) {
+                        createComment(text);
+                        FocusScopeNode currentFocus = FocusScope.of(context);
+                        if (!currentFocus.hasPrimaryFocus) {
+                          setState(() {
+                            currentFocus.unfocus();
+                          });
+                        }
+                        commentController.clear();
+                      }
+                    },
+                    icon: const Icon(Icons.near_me_rounded),
+                  )
+                ],
               ),
             ),
           ),
-          if (data.ingredients.isNotEmpty) ...[
-            Text(
-              'Ингредиенты',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: IngredientTable(
-                list: data.ingredients,
-              ),
-            )
-          ],
-          if (data.steps.isNotEmpty) ...[
-            Text(
-              'Шаги приготовления',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            for (int i = 0; i < data.steps.length; i++)
-              RecipeStepItem(
-                index: i + 1,
-                enabled: data.isStarted,
-                onSelect: (isSelect) {
-                  // setState(() {
-                  //   if (isSelect) {
-                  //     stepList[i] = selected;
-                  //   } else {
-                  //     stepList[i] = unselected;
-                  //   }
-                  // });
-                },
-                item: data.steps[i],
-              ),
-          ],
-          Center(
-            child: ToggleOutlineFilledButton(
-              outlinedLabel: 'Закончить готовить',
-              filledLabel: 'Начать готовить',
-              outlined: data.isStarted,
-              onPressed: (bool value) {
-                onStart(value);
-              },
-            ),
-          )
         ],
       ),
     );
   }
 
+  GlobalKey key = GlobalKey();
 }

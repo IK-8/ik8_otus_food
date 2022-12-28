@@ -7,11 +7,11 @@ class AssetRecipe extends Recipe {
       required super.id,
       required super.seconds,
       super.ingredients = const [],
-      super.steps = const [],
       super.isFavorite,
       super.isStarted,
       super.comments = const []});
 
+  @override
   AssetRecipe copyWith({bool? isFavorite, bool? isStarted}) {
     return AssetRecipe(
       image: image,
@@ -19,7 +19,6 @@ class AssetRecipe extends Recipe {
       id: id,
       seconds: seconds,
       ingredients: ingredients,
-      steps: steps,
       isFavorite: isFavorite ?? this.isFavorite,
       isStarted: isStarted ?? this.isStarted,
       comments: comments,
