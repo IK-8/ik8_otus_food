@@ -1,5 +1,6 @@
+import 'package:ik8_otus_food/src/domain/entities/step.dart';
+
 import '../../entities/recipe.dart';
-import '../../entities/recipe_info.dart';
 import '../../repositories/recipe_repository.dart';
 
 class StartRecipeUseCase {
@@ -10,7 +11,7 @@ class StartRecipeUseCase {
   call(
       {required int id,
       required bool isStarted,
-      required Function(RecipeInfo recipe) onChange}) {
+      required Function(Recipe recipe, List<RecipeStep> steps) onChange}) {
     _repository.start(id, isStarted: isStarted, onChange: onChange);
   }
 }

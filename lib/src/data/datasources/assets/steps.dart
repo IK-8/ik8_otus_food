@@ -1,3 +1,5 @@
+import 'package:ik8_otus_food/src/domain/entities/step.dart';
+
 import '../../models/assets/step.dart';
 
 class AssetRecipeStepService {
@@ -74,4 +76,16 @@ class AssetRecipeStepService {
 
   List<AssetRecipeStep> byRecipe(int recipeId) =>
       _all.where((element) => element.recipeId == recipeId).toList();
+
+  void setStepChecked(int id,
+      {required bool isChecked,
+      required Function(List<RecipeStep> steps) onChange}) {
+    for (var i = 0; i < _all.length; i++) {
+      var item = _all[i];
+      if (item.id == id) {
+        _all[i] = item.copyWith(isChecked: isChecked);
+        onChange(byRecipe(item.recipeId));
+      }
+    }
+  }
 }

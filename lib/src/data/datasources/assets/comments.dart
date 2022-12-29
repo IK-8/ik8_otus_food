@@ -7,10 +7,15 @@ class AssetRecipeCommentsService {
   static AssetRecipeComment _byId(int id) =>
       _all.firstWhere((element) => element.id == id);
 
-  void create({required int recipeId, required String text}) {
-    _all.add(AssetRecipeComment(
-        id: currentId, recipeId: recipeId, text: text, time: DateTime.now()));
+  void create(
+      {required int recipeId,
+      required String text,
+      required Function(AssetRecipeComment created) onCreate}) {
+    final created = AssetRecipeComment(
+        id: currentId, recipeId: recipeId, text: text, time: DateTime.now());
+    _all.add(created);
     currentId++;
+    onCreate(created);
   }
 
   List<AssetRecipeComment> byRecipe(int recipeId) =>

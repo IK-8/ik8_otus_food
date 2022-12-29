@@ -1,12 +1,11 @@
-import 'package:ik8_otus_food/src/data/datasources/assets/comments.dart';
 import 'package:ik8_otus_food/src/data/models/assets/recipe.dart';
 import 'package:ik8_otus_food/src/domain/entities/measure.dart';
 import 'package:ik8_otus_food/src/domain/entities/recipe.dart';
 import 'package:ik8_otus_food/src/domain/entities/recipe_info.dart';
 
+import '../../../domain/entities/step.dart';
 import '../../models/assets/ingredient.dart';
 import '../../models/assets/product.dart';
-import '../../models/assets/step.dart';
 import 'steps.dart';
 
 class AssetRecipeService {
@@ -113,23 +112,21 @@ class AssetRecipeService {
       _all.firstWhere((element) => element.id == id);
 
   final AssetRecipeStepService _stepService;
-  final AssetRecipeCommentsService _commentsService;
 
-  AssetRecipeService(this._stepService, this._commentsService);
+  AssetRecipeService(this._stepService);
 
   void setFavorite(int id,
-      {required bool isFavorite,
-      required Function(RecipeInfo recipe) onChange}) {
+      {required bool isFavorite, required Function(Recipe recipe) onChange}) {
     final find = _all.firstWhere((element) => element.id == id);
     final index = _all.indexOf(find);
     final copy = find.copyWith(isFavorite: isFavorite);
     _all[index] = copy;
-    onChange(getInfo(id));
+    onChange(copy);
   }
 
   void start(int id,
       {required bool isStarted,
-      required Function(RecipeInfo recipe) onChange}) {
+      required Function(Recipe recipe, List<RecipeStep> steps) onChange}) {
     final find = _all.firstWhere((element) => element.id == id);
     final index = _all.indexOf(find);
     if (isStarted == false) {
@@ -137,30 +134,12 @@ class AssetRecipeService {
     }
     final copy = find.copyWith(isStarted: isStarted);
     _all[index] = copy;
-    onChange(getInfo(id));
+    onChange(copy, _stepService.byRecipe(id));
   }
 
   RecipeInfo getInfo(int id) {
-    return RecipeInfo(
-      recipe: _byId(id),
-      steps: _stepService.byRecipe(id),
-      comments: _commentsService.byRecipe(id),
-    );
+    return RecipeInfo(recipe: _byId(id), steps: _stepService.byRecipe(id));
   }
 
-  void create(
-      {required int recipeId,
-      required String text,
-      required Function(RecipeInfo recipe) onChange}) {
-    _commentsService.create(recipeId: recipeId, text: text);
-    onChange(getInfo(recipeId));
-  }
 
-  void setStepChecked(int stepId,
-      {required int recipeId,
-      required bool isChecked,
-      required Function(RecipeInfo recipe) onChange}) {
-    _stepService.setChecked(stepId, isChecked);
-    onChange(getInfo(recipeId));
-  }
 }

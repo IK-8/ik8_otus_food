@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:ik8_otus_food/src/core/bloc/bloc.dart';
+import 'package:ik8_otus_food/src/core/extension/focus.dart';
 import 'package:ik8_otus_food/src/domain/entities/recipe.dart';
 import 'package:ik8_otus_food/src/injector.dart';
-import 'package:ik8_otus_food/src/presentations/widgets/recipe_step/item.dart';
-import '../../../../../l10n/extension.dart';
-import '../../../../domain/entities/recipe_info.dart';
-import '../../../../domain/usecase/recipe/create_comment.dart';
-import '../../../../domain/usecase/recipe/info.dart';
-import '../../../../domain/usecase/recipe/set_checked_step.dart';
-import '../../../../domain/usecase/recipe/set_favorite.dart';
-import '../../../../domain/usecase/recipe/start.dart';
-import '../../../widgets/ingredient/table.dart';
+import 'package:ik8_otus_food/src/presentations/blocs/recipe/comments.dart';
+import 'package:ik8_otus_food/src/presentations/blocs/recipe/info.dart';
+import 'package:ik8_otus_food/src/presentations/pages/recipe/current/steps.dart';
 import '../../../widgets/widgets.dart';
 import 'comment_field.dart';
+import 'comments.dart';
+import 'ingredients.dart';
+import 'recipe_info.dart';
 
-class CurrentRecipePage extends StatefulWidget {
+class CurrentRecipePage extends StatelessWidget {
   final Recipe data;
 
   const CurrentRecipePage(this.data, {Key? key}) : super(key: key);
@@ -23,225 +22,96 @@ class CurrentRecipePage extends StatefulWidget {
   }
 
   @override
-  State<CurrentRecipePage> createState() => _CurrentRecipePageState();
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<RecipeCommentsCubit>(
+            create: (_) =>
+            injector(param1: data.id)
+              ..update()),
+        BlocProvider<RecipeInfoCubit>(
+            create: (_) =>
+            injector(param1: data)
+              ..refreshSteps()),
+      ],
+      child: CurrentRecipePageView(data),
+    );
+  }
 }
 
-class _CurrentRecipePageState extends State<CurrentRecipePage> {
-  late RecipeInfo data = getInfo();
+class CurrentRecipePageView extends StatefulWidget {
+  final Recipe data;
 
-  RecipeInfo getInfo() {
-    return injector<GetRecipeInfoUseCase>().call(widget.data.id);
-  }
+  const CurrentRecipePageView(this.data, {Key? key}) : super(key: key);
 
-  onChangeFavorite(bool isFavorite) {
-    injector<SetFavoriteRecipeUseCase>().call(
-        id: data.id,
-        isFavorite: isFavorite,
-        onChange: (data) {
-          setState(() {
-            this.data = data;
-          });
-        });
-  }
+  @override
+  State<CurrentRecipePageView> createState() => _CurrentRecipePageViewState();
+}
 
-  onStart(bool isStarted) {
-    injector<StartRecipeUseCase>().call(
-        id: data.id,
-        isStarted: isStarted,
-        onChange: (data) {
-          setState(() {
-            this.data = data;
-          });
-        });
-  }
-
-  onCheckedStep(int stepId, bool isChecked) {
-    injector<SetCheckedRecipeStepUseCase>().call(
-        id: stepId,
-        recipeId: data.id,
-        isChecked: isChecked,
-        onChange: (data) {
-          setState(() {
-            this.data = data;
-          });
-        });
-  }
+class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
 
   createComment(String text) {
-    injector<CreateRecipeCommentUseCase>().call(
-        recipeId: data.id,
-        text: text,
-        onChange: (data) {
-          setState(() {
-            this.data = data;
-          });
-        });
+    context.read<RecipeCommentsCubit>().createComment(text);
   }
 
-  bool setFocused = false;
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   commentFocus.addListener(() {
-  //     if (commentFocus.hasFocus) {
-  //       setFocused = true;
-  //     } else if (setFocused) {
-  //       setFocused = false;
-  //     }
-  //   });
-  // }
-
-  GlobalKey commentFieldKey = GlobalKey();
+  final commentFieldKey = GlobalKey();
   final commentController = TextEditingController();
-  // final commentFocus = FocusNode();
-  // var scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    commentController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    var bottom = MediaQuery.of(context).viewInsets.bottom;
+    var bottom = MediaQuery
+        .of(context)
+        .viewInsets
+        .bottom;
     final keyboardIsOpened = bottom != 0.0;
     return Scaffold(
       appBar: AppBar(
         leading: !keyboardIsOpened
             ? null
             : IconButton(
-                onPressed: () {
-                  FocusScopeNode currentFocus = FocusScope.of(context);
-                  if (!currentFocus.hasPrimaryFocus) {
-                    currentFocus.unfocus();
-                  }
-                },
-                icon: const Icon(Icons.done),
-              ),
+          onPressed: () {
+            clearCurrentFocus(context);
+          },
+          icon: const Icon(Icons.done),
+        ),
         title: const Text('Рецепт'),
       ),
       body: Column(
         children: [
           Expanded(
               child: ListView(
-            // physics: const ClampingScrollPhysics(),
-            // controller: scrollController,
-
-            padding: const EdgeInsets.all(16),
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.all(16),
                 children: [
-                  Flexible(
-                    fit: FlexFit.tight,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0, top: 8),
-                          child: Text(widget.data.title,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w500, fontSize: 24)),
-                        ),
-                        DurationView(widget.data.seconds),
-                      ],
-                    ),
+                  const RecipeInfoView(),
+                  const IngredientsList(),
+                  const StepList(),
+                  const Center(
+                    child:_StartButton(),
                   ),
-                  FavoriteButton(
-                    onChanged: onChangeFavorite,
-                    value: data.recipe.isFavorite,
-                  )
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  const Divider(
+                    color: Color(0xff797676),
+                  ),
+                  const CommentList(),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  if (!keyboardIsOpened)
+                    CommentField(
+                      key: commentFieldKey,
+                      controller: commentController,
+                      create: createComment,
+                    ),
                 ],
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: AspectRatio(
-                    aspectRatio: 2,
-                    child: Image.asset(
-                      widget.data.image,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-              if (data.recipe.ingredients.isNotEmpty) ...[
-                Text(
-                  AppLocalizations.of(context)!.ingredientsTitle,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: IngredientTable(
-                    list: data.recipe.ingredients,
-                  ),
-                )
-              ],
-              if (data.steps.isNotEmpty) ...[
-                Text(
-                  AppLocalizations.of(context)!.cookingStepsTitle,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                for (int i = 0; i < data.steps.length; i++)
-                  RecipeStepItem(
-                    index: i + 1,
-                    enabled: data.recipe.isStarted,
-                    onSelect: (isSelect) {
-                      onCheckedStep(data.steps[i].id, isSelect);
-                    },
-                    item: data.steps[i],
-                  ),
-              ],
-              Center(
-                child: ToggleOutlineFilledButton(
-                  outlinedLabel: 'Закончить готовить',
-                  filledLabel: 'Начать готовить',
-                  outlined: data.recipe.isStarted,
-                  onPressed: (bool value) {
-                    onStart(value);
-                  },
-                ),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              const Divider(
-                color: Color(0xff797676),
-              ),
-              for (var comment in data.comments)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!
-                            .ddMMyyFormat(comment.time),
-                        style: const TextStyle(
-                            color: Color(0xffC2C2C2),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        comment.text,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                ),
-              const SizedBox(
-                height: 16,
-              ),
-              if (!keyboardIsOpened)
-                CommentField(
-                  key: commentFieldKey,
-                  controller: commentController,
-                  create: createComment,
-                ),
-            ],
-          )),
+              )),
           if (keyboardIsOpened)
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -255,5 +125,24 @@ class _CurrentRecipePageState extends State<CurrentRecipePage> {
       ),
     );
   }
+}
 
+class _StartButton extends StatelessWidget {
+  const _StartButton({Key? key}) : super(key: key);
+
+  onStart(BuildContext context, bool isStarted) {
+    context.read<RecipeInfoCubit>().start(isStarted);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isStarted = context.select((RecipeInfoCubit value) =>
+    value.state.data?.recipe.isStarted == true);
+    return ToggleOutlineFilledButton(
+      outlinedLabel: 'Закончить готовить',
+      filledLabel: 'Начать готовить',
+      outlined: isStarted,
+      onPressed: (bool value) => onStart(context, value),
+    );
+  }
 }
