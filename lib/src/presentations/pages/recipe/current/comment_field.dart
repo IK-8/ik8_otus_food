@@ -6,11 +6,13 @@ import '../../../../core/extension/focus.dart';
 class CommentField extends StatelessWidget {
   final TextEditingController controller;
   final Function(String text) create;
+  final FocusNode focusNode;
 
   const CommentField({
     Key? key,
     required this.controller,
     required this.create,
+    required this.focusNode,
   }) : super(key: key);
 
   onCreate(BuildContext context) {
@@ -38,6 +40,7 @@ class CommentField extends StatelessWidget {
           Flexible(
             fit: FlexFit.tight,
             child: TextFormField(
+              focusNode: focusNode,
               decoration: InputDecoration(
                   hintText: AppLocalizations.of(context)!.leaveCommentHint,
                   helperStyle: const TextStyle(color: Color(0xffC2C2C2)),

@@ -49,30 +49,55 @@ class CurrentRecipePageView extends StatefulWidget {
 }
 
 class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
-
   createComment(String text) {
     context.read<RecipeCommentsCubit>().createComment(text);
   }
 
+  var _commentFieldHasFocus = false;
+
+  set commentFieldHasFocus(bool value) {
+    if (value != _commentFieldHasFocus) {
+      setState(() {
+        _commentFieldHasFocus = value;
+      });
+    } else {
+      _commentFieldHasFocus = value;
+    }
+  }
+
+  bool get commentFieldHasFocus => _commentFieldHasFocus;
+  final commentFocusNode = FocusNode();
   final commentFieldKey = GlobalKey();
   final commentController = TextEditingController();
 
   @override
-  void dispose() {
-    commentController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    commentFocusNode.addListener(() {
+      commentFieldHasFocus = commentFocusNode.hasFocus;
+    });
   }
 
   @override
+  void dispose() {
+    commentController.dispose();
+    commentFocusNode.dispose();
+    super.dispose();
+  }
+
+  final scrollController = ScrollController();
+
+  @override
   Widget build(BuildContext context) {
-    var bottom = MediaQuery
-        .of(context)
-        .viewInsets
-        .bottom;
-    final keyboardIsOpened = bottom != 0.0;
+    final commentInputActive =
+        commentFieldHasFocus || MediaQuery
+            .of(context)
+            .viewInsets
+            .bottom != 0.0;
     return Scaffold(
       appBar: AppBar(
-        leading: !keyboardIsOpened
+        elevation: 2,
+        leading: !commentInputActive
             ? null
             : IconButton(
           onPressed: () {
@@ -82,46 +107,65 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
         ),
         title: const Text('Рецепт'),
       ),
-      body: Column(
-        children: [
-          Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  const RecipeInfoView(),
-                  const IngredientsList(),
-                  const StepList(),
-                  const Center(
-                    child:_StartButton(),
+      body: Scrollbar(
+        controller: scrollController,
+        interactive: true,
+        child: MaxWebWidthView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(
+                      scrollbars: false),
+                  child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: Column(
+                            children: [
+                              const RecipeInfoView(),
+                              const IngredientsList(),
+                              const StepList(),
+                              const Center(
+                                child: _StartButton(),
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              const Divider(
+                                color: Color(0xff797676),
+                              ),
+                              const CommentList(),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              if (!commentInputActive)
+                                CommentField(
+                                  key: commentFieldKey,
+                                  controller: commentController,
+                                  focusNode: commentFocusNode,
+                                  create: createComment,
+                                ),
+                            ],
+                        ),
+                      )
                   ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  const Divider(
-                    color: Color(0xff797676),
-                  ),
-                  const CommentList(),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  if (!keyboardIsOpened)
-                    CommentField(
-                      key: commentFieldKey,
-                      controller: commentController,
-                      create: createComment,
-                    ),
-                ],
-              )),
-          if (keyboardIsOpened)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CommentField(
-                key: commentFieldKey,
-                controller: commentController,
-                create: createComment,
+                ),
               ),
-            ),
-        ],
+              if (commentInputActive)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CommentField(
+                    key: commentFieldKey,
+                    controller: commentController,
+                    focusNode: commentFocusNode,
+                    create: createComment,
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -136,8 +180,9 @@ class _StartButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isStarted = context.select((RecipeInfoCubit value) =>
-    value.state.data?.recipe.isStarted == true);
+    final isStarted = context.select(
+            (RecipeInfoCubit value) =>
+        value.state.data?.recipe.isStarted == true);
     return ToggleOutlineFilledButton(
       outlinedLabel: 'Закончить готовить',
       filledLabel: 'Начать готовить',
