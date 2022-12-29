@@ -26,13 +26,9 @@ class CurrentRecipePage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<RecipeCommentsCubit>(
-            create: (_) =>
-            injector(param1: data.id)
-              ..update()),
+            create: (_) => injector(param1: data.id)..update()),
         BlocProvider<RecipeInfoCubit>(
-            create: (_) =>
-            injector(param1: data)
-              ..refreshSteps()),
+            create: (_) => injector(param1: data)..refreshSteps()),
       ],
       child: CurrentRecipePageView(data),
     );
@@ -90,81 +86,74 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
   @override
   Widget build(BuildContext context) {
     final commentInputActive =
-        commentFieldHasFocus || MediaQuery
-            .of(context)
-            .viewInsets
-            .bottom != 0.0;
+        commentFieldHasFocus || MediaQuery.of(context).viewInsets.bottom != 0.0;
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
         leading: !commentInputActive
             ? null
             : IconButton(
-          onPressed: () {
-            clearCurrentFocus(context);
-          },
-          icon: const Icon(Icons.done),
-        ),
+                onPressed: () {
+                  clearCurrentFocus(context);
+                },
+                icon: const Icon(Icons.done),
+              ),
         title: const Text('Рецепт'),
       ),
-      body: Scrollbar(
-        controller: scrollController,
-        interactive: true,
-        child: MaxWebWidthView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                child: ScrollConfiguration(
-                  behavior: ScrollConfiguration.of(context).copyWith(
-                      scrollbars: false),
-                  child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: SingleChildScrollView(
-                        controller: scrollController,
-                        child: Column(
-                            children: [
-                              const RecipeInfoView(),
-                              const IngredientsList(),
-                              const StepList(),
-                              const Center(
-                                child: _StartButton(),
-                              ),
-                              const SizedBox(
-                                height: 16,
-                              ),
-                              const Divider(
-                                color: Color(0xff797676),
-                              ),
-                              const CommentList(),
-                              const SizedBox(
-                                height: 16,
-                              ),
-                              if (!commentInputActive)
-                                CommentField(
-                                  key: commentFieldKey,
-                                  controller: commentController,
-                                  focusNode: commentFocusNode,
-                                  create: createComment,
-                                ),
-                            ],
-                        ),
-                      )
-                  ),
+      body: MaxWebWidthScrollbarView(
+        scrollController: scrollController,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context)
+                      .copyWith(scrollbars: false),
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          const RecipeInfoView(),
+                          const IngredientsList(),
+                          const StepList(),
+                          const Center(
+                            child: _StartButton(),
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          const Divider(
+                            color: Color(0xff797676),
+                          ),
+                          const CommentList(),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          if (!commentInputActive)
+                            CommentField(
+                              key: commentFieldKey,
+                              controller: commentController,
+                              focusNode: commentFocusNode,
+                              create: createComment,
+                            ),
+                        ],
+                      ),
+                    ),
+                  )),
+            ),
+            if (commentInputActive)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CommentField(
+                  key: commentFieldKey,
+                  controller: commentController,
+                  focusNode: commentFocusNode,
+                  create: createComment,
                 ),
               ),
-              if (commentInputActive)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CommentField(
-                    key: commentFieldKey,
-                    controller: commentController,
-                    focusNode: commentFocusNode,
-                    create: createComment,
-                  ),
-                ),
-            ],
-          ),
+          ],
         ),
       ),
     );
@@ -181,8 +170,7 @@ class _StartButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isStarted = context.select(
-            (RecipeInfoCubit value) =>
-        value.state.data?.recipe.isStarted == true);
+        (RecipeInfoCubit value) => value.state.data?.recipe.isStarted == true);
     return ToggleOutlineFilledButton(
       outlinedLabel: 'Закончить готовить',
       filledLabel: 'Начать готовить',

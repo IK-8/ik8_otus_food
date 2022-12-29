@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 const kMaxWebWidth = 950.0;
@@ -27,28 +26,34 @@ class MaxWebWidthView extends StatelessWidget {
   }
 }
 
-class MaxWebWidthScrollableView extends StatelessWidget {
+class MaxWebWidthScrollbarView extends StatelessWidget {
   final Widget child;
+  final ScrollController scrollController;
 
-  const MaxWebWidthScrollableView({Key? key, required this.child})
+  const MaxWebWidthScrollbarView(
+      {Key? key, required this.scrollController, required this.child})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     if (MediaQuery.of(context).size.width < kMaxWebWidth) {
-      return SingleChildScrollView(child: child);
+      return child;
     }
-    return SizedBox(
-      width: kMaxWebWidth,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Material(
-            elevation: 2,
-            child: child,
-          ),
-        ],
+    return Scrollbar(
+      controller: scrollController,
+      interactive: true,
+      child: SizedBox(
+        width: kMaxWebWidth,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Material(
+              elevation: 2,
+              child: child,
+            ),
+          ],
+        ),
       ),
     );
   }

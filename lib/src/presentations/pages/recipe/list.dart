@@ -3,7 +3,7 @@ import '../../../config/theme/main.dart';
 import '../../../domain/repositories/recipe_repository.dart';
 import '../../widgets/widgets.dart';
 import 'current/current.dart';
-
+//TODO: add bloc subscription
 class RecipeListView extends StatelessWidget {
   final RecipeRepository _repository;
 
