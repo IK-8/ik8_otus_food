@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ik8_otus_food/src/data/datasources/assets/steps.dart';
 import 'package:ik8_otus_food/src/domain/entities/recipe.dart';
 import 'package:ik8_otus_food/src/domain/entities/step.dart';
@@ -23,6 +25,7 @@ class RecipeRepositoryImpl extends RecipeRepository {
     required Function(Recipe recipe) onChange,
   }) {
     _service.setFavorite(id, isFavorite: isFavorite, onChange: onChange);
+
   }
 
   @override
@@ -56,5 +59,11 @@ class RecipeRepositoryImpl extends RecipeRepository {
   @override
   List<RecipeStep> recipeSteps(int recipeId) {
     return _stepService.byRecipe(recipeId);
+  }
+
+  @override
+  StreamSubscription<List<Recipe>> subscribeList(
+      {required Function(List<Recipe> list) onData}) {
+    return _service.subscribeList(onData: onData);
   }
 }

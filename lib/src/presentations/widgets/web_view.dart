@@ -42,18 +42,17 @@ class MaxWebWidthScrollbarView extends StatelessWidget {
     return Scrollbar(
       controller: scrollController,
       interactive: true,
-      child: SizedBox(
-        width: kMaxWebWidth,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Material(
-              elevation: 2,
-              child: child,
-            ),
-          ],
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+              width: kMaxWebWidth,
+              child: Material(
+                elevation: 2,
+                child: child,
+              )),
+        ],
       ),
     );
   }

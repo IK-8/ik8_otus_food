@@ -8,8 +8,7 @@ class AssetRecipe extends Recipe {
       required super.seconds,
       super.ingredients = const [],
       super.isFavorite,
-      super.isStarted,
-      super.comments = const []});
+      super.isStarted});
 
   @override
   AssetRecipe copyWith({bool? isFavorite, bool? isStarted}) {
@@ -21,7 +20,6 @@ class AssetRecipe extends Recipe {
       ingredients: ingredients,
       isFavorite: isFavorite ?? this.isFavorite,
       isStarted: isStarted ?? this.isStarted,
-      comments: comments,
     );
   }
 }

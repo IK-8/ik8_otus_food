@@ -16,6 +16,7 @@ class IngredientsList extends StatelessWidget {
       return const SizedBox();
     }
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           AppLocalizations.of(context)!.ingredientsTitle,

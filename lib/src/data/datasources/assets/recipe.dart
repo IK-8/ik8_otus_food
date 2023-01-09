@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ik8_otus_food/src/data/models/assets/recipe.dart';
 import 'package:ik8_otus_food/src/domain/entities/measure.dart';
 import 'package:ik8_otus_food/src/domain/entities/recipe.dart';
@@ -121,6 +123,7 @@ class AssetRecipeService {
     final index = _all.indexOf(find);
     final copy = find.copyWith(isFavorite: isFavorite);
     _all[index] = copy;
+    updateSubscriptions();
     onChange(copy);
   }
 
@@ -134,6 +137,7 @@ class AssetRecipeService {
     }
     final copy = find.copyWith(isStarted: isStarted);
     _all[index] = copy;
+    updateSubscriptions();
     onChange(copy, _stepService.byRecipe(id));
   }
 
@@ -141,5 +145,16 @@ class AssetRecipeService {
     return RecipeInfo(recipe: _byId(id), steps: _stepService.byRecipe(id));
   }
 
+  late final _streamController = StreamController<List<Recipe>>()..add(_all);
 
+  updateSubscriptions() {
+    _streamController.add(_all);
+  }
+
+  StreamSubscription<List<Recipe>> subscribeList(
+      {required Function(List<Recipe> list) onData}) {
+    return _streamController.stream.listen((event) {
+      onData(event);
+    });
+  }
 }

@@ -10,8 +10,6 @@ abstract class Recipe {
   final int seconds;
   final bool isFavorite;
   final bool isStarted;
-  // final List<RecipeStep> steps;
-  final List<RecipeComment> comments;
   final List<RecipeIngredient> ingredients;
 
   const Recipe(
@@ -19,8 +17,6 @@ abstract class Recipe {
       required this.image,
       required this.title,
       required this.seconds,
-      // required this.steps,
-      required this.comments,
       required this.ingredients,
       this.isStarted = false,
       this.isFavorite = false});

@@ -24,23 +24,26 @@ class StepList extends StatelessWidget {
     if (steps.isEmpty) {
       return const SizedBox();
     }
-    return Column(children: [
-      Text(
-        AppLocalizations.of(context)!.cookingStepsTitle,
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      const SizedBox(
-        height: 16,
-      ),
-      for (int i = 0; i < steps.length; i++)
-        RecipeStepItem(
-          index: i + 1,
-          enabled: enabled,
-          onSelect: (isSelect) {
-            onCheckedStep(context, steps[i].id, isSelect);
-          },
-          item: steps[i],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.cookingStepsTitle,
+          style: Theme.of(context).textTheme.titleMedium,
         ),
-    ]);
+        const SizedBox(
+          height: 16,
+        ),
+        for (int i = 0; i < steps.length; i++)
+          RecipeStepItem(
+            index: i + 1,
+            enabled: enabled,
+            onSelect: (isSelect) {
+              onCheckedStep(context, steps[i].id, isSelect);
+            },
+            item: steps[i],
+          ),
+      ],
+    );
   }
 }

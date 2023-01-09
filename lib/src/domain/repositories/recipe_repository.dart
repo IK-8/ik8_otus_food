@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ik8_otus_food/src/domain/entities/step.dart';
 
 import '../entities/recipe.dart';
@@ -5,6 +7,9 @@ import '../entities/recipe_info.dart';
 
 abstract class RecipeRepository {
   List<Recipe> get all;
+
+  StreamSubscription<List<Recipe>> subscribeList(
+      {required Function(List<Recipe> list) onData});
 
   void setFavorite(
     int id, {

@@ -6,6 +6,7 @@ import 'package:ik8_otus_food/src/presentations/pages/splash.dart';
 
 import 'l10n/extension.dart';
 import 'src/presentations/pages/recipe/list.dart';
+
 //
 // class A {
 //   int key;
@@ -21,7 +22,6 @@ import 'src/presentations/pages/recipe/list.dart';
 //
 //   B(this.key);
 // }
-
 
 void main() {
   // print([1, 2, 3] == [1, 2, 3]);
@@ -82,7 +82,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      home: RecipeListView(injector()),
+      home: const RecipeListPage(),
     );
   }
 }
