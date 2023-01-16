@@ -3,6 +3,8 @@ import 'package:ik8_otus_food/l10n/extension.dart';
 import 'package:ik8_otus_food/src/core/extension/extension.dart';
 import 'package:ik8_otus_food/src/domain/entities/ingredient.dart';
 
+import '../../../config/theme/main.dart';
+
 const bullet = "\u2022 ";
 
 class IngredientTable extends StatelessWidget {
@@ -15,7 +17,7 @@ class IngredientTable extends StatelessWidget {
     return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: const Color(0xff797676), width: 3),
+          border: Border.all(color: greyColor, width: 3),
         ),
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         child: Table(
@@ -36,7 +38,7 @@ class IngredientTable extends StatelessWidget {
                 Text(
                   AppLocalizations.of(context)!.ingredientMeasureFormat(item),
                   style: const TextStyle(
-                      color: Color(0xff797676),
+                      color: greyColor,
                       fontWeight: FontWeight.w400,
                       height: 1.8),
                 ),

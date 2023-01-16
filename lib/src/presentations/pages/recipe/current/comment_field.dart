@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:ik8_otus_food/l10n/extension.dart';
 
+import '../../../../config/shortcuts/shortcuts.dart';
+import '../../../../config/theme/main.dart';
 import '../../../../core/extension/focus.dart';
 
 class CommentField extends StatelessWidget {
@@ -29,13 +31,12 @@ class CommentField extends StatelessWidget {
   Widget build(BuildContext context) {
     return CallbackShortcuts(
       bindings: {
-        LogicalKeySet(LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.enter):
-            () => onCreate(context),
+        enterMessageShortcut: () => onCreate(context),
       },
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: const Color(0xff165932),
+            color: primaryDarkColor,
             width: 2,
           ),
           borderRadius: BorderRadius.circular(5),
@@ -49,13 +50,15 @@ class CommentField extends StatelessWidget {
                 focusNode: focusNode,
                 decoration: InputDecoration(
                     hintText: AppLocalizations.of(context)!.leaveCommentHint,
-                    helperStyle: const TextStyle(color: Color(0xffC2C2C2)),
+                    helperStyle: const TextStyle(color: hintColor),
                     border: InputBorder.none),
                 maxLines: 3,
                 controller: controller,
               ),
             ),
             IconButton(
+              tooltip:
+                  kIsWeb ? AppLocalizations.of(context)!.commandForEnter : null,
               onPressed: () => onCreate(context),
               icon: const Icon(Icons.near_me_rounded),
             )

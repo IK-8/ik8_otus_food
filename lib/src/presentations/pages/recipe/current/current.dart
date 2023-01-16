@@ -6,6 +6,7 @@ import 'package:ik8_otus_food/src/injector.dart';
 import 'package:ik8_otus_food/src/presentations/blocs/recipe/comments.dart';
 import 'package:ik8_otus_food/src/presentations/blocs/recipe/info.dart';
 import 'package:ik8_otus_food/src/presentations/pages/recipe/current/steps.dart';
+import '../../../../config/theme/main.dart';
 import '../../../widgets/widgets.dart';
 import 'comment_field.dart';
 import 'comments.dart';
@@ -56,8 +57,6 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
       setState(() {
         _commentFieldHasFocus = value;
       });
-    } else {
-      _commentFieldHasFocus = value;
     }
   }
 
@@ -66,6 +65,7 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
   final commentFieldKey = GlobalKey();
   final commentController = TextEditingController();
 
+  final scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -78,10 +78,10 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
   void dispose() {
     commentController.dispose();
     commentFocusNode.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
-  final scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +125,7 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
                             height: 16,
                           ),
                           const Divider(
-                            color: Color(0xff797676),
+                            color: greyColor,
                           ),
                           const CommentList(),
                           const SizedBox(

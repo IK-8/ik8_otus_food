@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ik8_otus_food/src/domain/entities/comment.dart';
 
 import '../../../../l10n/extension.dart';
+import '../../../config/theme/main.dart';
 
 class RecipeCommentItem extends StatelessWidget {
   final RecipeComment item;
@@ -16,7 +17,7 @@ class RecipeCommentItem extends StatelessWidget {
         Text(
           AppLocalizations.of(context)!.ddMMyyFormat(item.time),
           style: const TextStyle(
-              color: Color(0xffC2C2C2),
+              color: hintColor,
               fontSize: 16,
               fontWeight: FontWeight.w400),
         ),

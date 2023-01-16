@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:widget_mask/widget_mask.dart';
 
-const _end = Color(0xff2ECC71);
-const _start = Color(0xff165932);
+import '../../config/theme/main.dart';
+
+const _end = primaryColor;
+const _start = primaryDarkColor;
 const _foreground = 'assets/decoration/splash_mask.png';
 const _label = 'OTUS\nFOOD';
 

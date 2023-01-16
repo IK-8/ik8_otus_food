@@ -24,6 +24,7 @@
   "ingredientsTitle":"Ингредиенты",
   "cookingStepsTitle":"Шаги приготовления",
   "recipeTitle":"Рецепт",
-  "leaveCommentHint":"оставить комментарий"
+  "leaveCommentHint":"оставить комментарий",
+  "commandForEnter":"Ctrl+Enter - для отправки"
 
 }

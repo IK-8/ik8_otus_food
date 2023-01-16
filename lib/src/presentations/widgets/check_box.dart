@@ -18,7 +18,7 @@ class AppCheckbox extends StatelessWidget {
           value: isChecked,
           fillColor: MaterialStateProperty.resolveWith((states) {
             if (states.contains(MaterialState.disabled)) {
-              return const Color(0xff797676);
+              return greyColor;
             }
             return primaryDarkColor;
           }),

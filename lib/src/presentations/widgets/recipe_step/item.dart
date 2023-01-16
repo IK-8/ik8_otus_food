@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ik8_otus_food/src/core/extension/extension.dart';
 
+import '../../../config/theme/main.dart';
 import '../../../domain/entities/step.dart';
 import '../check_box.dart';
 
@@ -21,13 +22,13 @@ class RecipeStepItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color cardColor =
-        enabled ? const Color(0x262ecc71) : const Color(0xffECECEC);
+        enabled ? const Color(0x262ecc71) : backgroundColor;
     Color textColor =
-        enabled ? const Color(0xff2D490C) : const Color(0xff797676);
+        enabled ? const Color(0xff2D490C) : greyColor;
     Color stepColor =
-        enabled ? const Color(0xff2ECC71) : const Color(0xffC2C2C2);
+        enabled ? primaryColor : hintColor;
     Color durationColor =
-        enabled ? const Color(0xff165932) : const Color(0xff797676);
+        enabled ? primaryDarkColor : greyColor;
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5), color: cardColor),

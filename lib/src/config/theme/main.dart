@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-const primaryColor = Color.fromRGBO(46, 204, 113, 1.0);
+const primaryColor = Color(0xff2ECC71);
 const primaryDarkColor = Color(0xff165932);
 const backgroundColor = Color(0xffECECEC);
+const greyColor = Color(0xff797676);
+const hintColor =  Color(0xffC2C2C2);
 final primaryMaterial = MaterialColor(
   const Color.fromRGBO(46, 204, 113, 1.0).value,
   const <int, Color>{
