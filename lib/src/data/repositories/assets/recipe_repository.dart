@@ -4,16 +4,17 @@ import 'package:ik8_otus_food/src/data/datasources/assets/steps.dart';
 import 'package:ik8_otus_food/src/domain/entities/recipe.dart';
 import 'package:ik8_otus_food/src/domain/entities/step.dart';
 
-import '../../../domain/entities/comment.dart';
+import '../../../core/service/recipe/recipe_timer_service.dart';
 import '../../../domain/entities/recipe_info.dart';
 import '../../../domain/repositories/recipe_repository.dart';
 import '../../datasources/assets/recipe.dart';
 
 class RecipeRepositoryImpl extends RecipeRepository {
+  final RecipeTimerService _timerService;
   final AssetRecipeService _service;
   final AssetRecipeStepService _stepService;
 
-  RecipeRepositoryImpl(this._service, this._stepService);
+  RecipeRepositoryImpl(this._service, this._stepService, this._timerService);
 
   @override
   List<Recipe> get all => _service.all;
@@ -25,7 +26,6 @@ class RecipeRepositoryImpl extends RecipeRepository {
     required Function(Recipe recipe) onChange,
   }) {
     _service.setFavorite(id, isFavorite: isFavorite, onChange: onChange);
-
   }
 
   @override
@@ -34,7 +34,18 @@ class RecipeRepositoryImpl extends RecipeRepository {
     required bool isStarted,
     required Function(Recipe recipe, List<RecipeStep> steps) onChange,
   }) {
-    _service.start(id, isStarted: isStarted, onChange: onChange);
+    _service.start(
+      id,
+      isStarted: isStarted,
+      onChange: (recipe, steps) {
+        if (recipe.isStarted) {
+          _timerService.start(id, recipe.seconds);
+        } else {
+          _timerService.stop(id);
+        }
+        onChange(recipe,steps);
+      },
+    );
   }
 
   @override
@@ -65,5 +76,22 @@ class RecipeRepositoryImpl extends RecipeRepository {
   StreamSubscription<List<Recipe>> subscribeList(
       {required Function(List<Recipe> list) onData}) {
     return _service.subscribeList(onData: onData);
+  }
+
+  @override
+  StreamSubscription<bool> subscribeActiveTimer({
+    required int recipeId,
+    required void Function(TimerService? activeService) onChange,
+  }) {
+    onChange(_timerService.idTimerMap[recipeId]);
+    return _timerService
+        .idsValue()
+        .stream
+        .map((ids) => ids.contains(recipeId))
+        .listen(
+      (isActive) {
+        onChange(_timerService.idTimerMap[recipeId]);
+      },
+    );
   }
 }

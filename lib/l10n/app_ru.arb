@@ -25,6 +25,7 @@
   "cookingStepsTitle":"Шаги приготовления",
   "recipeTitle":"Рецепт",
   "leaveCommentHint":"оставить комментарий",
-  "commandForEnter":"Ctrl+Enter - для отправки"
+  "commandForEnter":"Ctrl+Enter - для отправки",
+  "timerTitle":"Таймер"
 
 }

@@ -1,7 +1,5 @@
 import 'package:ik8_otus_food/src/domain/entities/step.dart';
 
-import '../../entities/recipe.dart';
-import '../../entities/recipe_info.dart';
 import '../../repositories/recipe_repository.dart';
 
 class SetCheckedRecipeStepUseCase {

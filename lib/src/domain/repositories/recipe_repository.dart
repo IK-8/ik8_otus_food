@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ik8_otus_food/src/domain/entities/step.dart';
 
+import '../../core/service/timer_service.dart';
 import '../entities/recipe.dart';
 import '../entities/recipe_info.dart';
 
@@ -33,4 +34,9 @@ abstract class RecipeRepository {
   });
 
   List<RecipeStep> recipeSteps(int recipeId);
+
+  StreamSubscription<bool> subscribeActiveTimer({
+    required int recipeId,
+    required void Function(TimerService? activeService) onChange,
+  });
 }

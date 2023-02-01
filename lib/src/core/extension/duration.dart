@@ -70,3 +70,27 @@ class DurationStamp {
         microseconds = microseconds -
             (microseconds ~/ Duration.microsecondsPerMillisecond) * 1000;
 }
+
+extension DurationEx on Duration {
+  String hourMinuteSecondsTimerDurationFormat() {
+    String formatValue2(int value) => value.toString().padLeft(2, '0');
+    var seconds = inSeconds;
+    var minute = seconds ~/ 60;
+    seconds = seconds - minute * 60;
+
+    var hour = minute ~/ 60;
+    minute = minute - hour * 60;
+
+    StringBuffer buffer = StringBuffer();
+    if (hour != 0) {
+      buffer.write('${formatValue2(hour)}:');
+    }
+    // if (minute != 0) {
+    buffer.write(formatValue2(minute));
+    // }
+    // if (hour == 0 && seconds != 0) {
+    buffer.write(':${formatValue2(seconds)} ');
+    // }
+    return buffer.toString();
+  }
+}

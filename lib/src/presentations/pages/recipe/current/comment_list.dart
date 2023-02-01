@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ik8_otus_food/src/core/bloc/bloc.dart';
-import '../../../blocs/recipe/comments.dart';
-import '../../../widgets/recipe_comment/item.dart';
+import '../../../blocs/recipe/recipe_comments_cubit.dart';
+import '../../../widgets/recipe_comment/recipe_comment_item.dart';
 
 class CommentList extends StatelessWidget {
   const CommentList({Key? key}) : super(key: key);

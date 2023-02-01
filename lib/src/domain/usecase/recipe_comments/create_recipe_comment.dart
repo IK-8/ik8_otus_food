@@ -1,9 +1,6 @@
 import 'package:ik8_otus_food/src/domain/entities/comment.dart';
 
-import '../../entities/recipe.dart';
-import '../../entities/recipe_info.dart';
 import '../../repositories/comment_repository.dart';
-import '../../repositories/recipe_repository.dart';
 
 class CreateRecipeCommentUseCase {
   final CommentRepository _repository;

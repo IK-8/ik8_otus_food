@@ -1,10 +1,10 @@
 import 'package:ik8_otus_food/src/core/bloc/bloc.dart';
 import 'package:ik8_otus_food/src/domain/entities/recipe_info.dart';
-import 'package:ik8_otus_food/src/domain/usecase/recipe_steps/by_recipe.dart';
+import 'package:ik8_otus_food/src/domain/usecase/recipe_steps/get_all_recipe_step.dart';
 
 import '../../../domain/entities/recipe.dart';
-import '../../../domain/usecase/recipe/set_favorite.dart';
-import '../../../domain/usecase/recipe/start.dart';
+import '../../../domain/usecase/recipe/set_favorite_recipe.dart';
+import '../../../domain/usecase/recipe/start_recipe.dart';
 import '../../../domain/usecase/recipe_steps/set_checked_step.dart';
 
 class RecipeInfoCubit extends RequestStateCubit<RecipeInfo> {
