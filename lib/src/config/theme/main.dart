@@ -23,7 +23,10 @@ final primaryMaterial = MaterialColor(
 );
 final theme = ThemeData(
     primarySwatch: primaryMaterial,
-    backgroundColor: Colors.white,
+    colorScheme: ColorScheme.fromSwatch(
+      primarySwatch: primaryMaterial,
+      backgroundColor: Colors.white,
+    ),
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: const AppBarTheme(
         backgroundColor: Colors.white,

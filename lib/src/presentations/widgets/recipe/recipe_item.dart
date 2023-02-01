@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../domain/entities/recipe.dart';
-import 'duration.dart';
+import 'duration_view.dart';
 
 class RecipeItem extends StatelessWidget {
   final Recipe item;
@@ -18,7 +18,7 @@ class RecipeItem extends StatelessWidget {
           children: [
             Flexible(
               fit: FlexFit.tight,
-              flex: 2,
+              flex: 4,
               child: ClipRRect(
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(4),
@@ -33,7 +33,7 @@ class RecipeItem extends StatelessWidget {
             ),
             Flexible(
               fit: FlexFit.tight,
-              flex: 5,
+              flex: 6,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(

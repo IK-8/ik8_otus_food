@@ -30,7 +30,8 @@ class RecipeListView extends StatelessWidget {
         systemOverlayStyle: transparentSystemOverlayStyle,
         elevation: 0,
       ),
-      body: ListView.builder(
+      body: SafeArea(
+      child:ListView.builder(
         itemCount: list.length,
         // cacheExtent: 5000,
         addAutomaticKeepAlives: false,
@@ -50,7 +51,7 @@ class RecipeListView extends StatelessWidget {
             ),
           );
         },
-      ),
+      ),),
     );
   }
 }
