@@ -19,8 +19,10 @@ final primaryMaterial = MaterialColor(
   },
 );
 final theme = ThemeData(
-  primarySwatch: primaryMaterial,
-  backgroundColor: backgroundColor,
+  colorScheme: ColorScheme.fromSwatch(
+    primarySwatch: primaryMaterial,
+    backgroundColor: backgroundColor,
+  ),
   scaffoldBackgroundColor: backgroundColor,
 );
 

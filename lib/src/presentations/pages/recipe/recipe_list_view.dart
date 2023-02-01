@@ -17,17 +17,19 @@ class RecipeListView extends StatelessWidget {
         systemOverlayStyle: transparentSystemOverlayStyle,
         elevation: 0,
       ),
-      body: ListView.builder(
-        itemCount: list.length,
-        physics: const TopBouncingScrollPhysics(),
-        padding: const EdgeInsets.all(16),
-        itemBuilder: (BuildContext context, int index) {
-          var item = list[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
-            child: RecipeItem(item),
-          );
-        },
+      body: SafeArea(
+        child: ListView.builder(
+          itemCount: list.length,
+          physics: const TopBouncingScrollPhysics(),
+          padding: const EdgeInsets.all(16),
+          itemBuilder: (BuildContext context, int index) {
+            var item = list[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: RecipeItem(item),
+            );
+          },
+        ),
       ),
     );
   }
