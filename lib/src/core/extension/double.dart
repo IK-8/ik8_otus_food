@@ -6,7 +6,11 @@ extension DoubleEx on double {
     if (fraction != 0) {
       var fractionFormat = fractionFormatMap[fraction];
       if (fractionFormat != null) {
-        countFormat = '$ceilCount $fractionFormat';
+        if (ceilCount != 0) {
+          countFormat = '$ceilCount $fractionFormat';
+        } else {
+          countFormat = fractionFormat;
+        }
       }
     } else {
       countFormat = ceilCount.toString();

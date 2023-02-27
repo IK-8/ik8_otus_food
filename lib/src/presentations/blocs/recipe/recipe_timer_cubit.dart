@@ -6,7 +6,7 @@ import '../../../core/service/timer_service.dart';
 import '../../../domain/usecase/recipe/subscribe_recipe_timer.dart';
 
 class RecipeTimerCubit extends Cubit<Duration?> {
-  final int id;
+  final dynamic id;
   final SubscribeRecipeTimerUseCase _subscribeRecipeTimer;
 
   RecipeTimerCubit(

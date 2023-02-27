@@ -6,7 +6,9 @@ class GetAllRecipeUseCase {
 
   GetAllRecipeUseCase(this._repository);
 
-  List<Recipe> call() {
-    return _repository.all;
+  void call({
+    required Function(List<Recipe> list) onResponse,
+  }) {
+    return _repository.getAll(onResponse: onResponse);
   }
 }

@@ -8,7 +8,7 @@ class CreateRecipeCommentUseCase {
   CreateRecipeCommentUseCase(this._repository);
 
   call(
-      {required int recipeId,
+      {required dynamic recipeId,
       required String text,
       required Function(RecipeComment created) onCreate}) {
     _repository.createComment(

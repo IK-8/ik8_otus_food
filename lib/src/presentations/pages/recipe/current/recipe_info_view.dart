@@ -53,7 +53,7 @@ class RecipeInfoView extends StatelessWidget {
             borderRadius: BorderRadius.circular(6),
             child: AspectRatio(
               aspectRatio: 2,
-              child: Image.asset(
+              child: Image.network(
                 data.image,
                 fit: BoxFit.cover,
                 errorBuilder: foodErrorBuilder,

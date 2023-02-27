@@ -110,14 +110,14 @@ class AssetRecipeService {
 
   List<AssetRecipe> get all => _all;
 
-  static AssetRecipe _byId(int id) =>
+  static AssetRecipe _byId(dynamic id) =>
       _all.firstWhere((element) => element.id == id);
 
   final AssetRecipeStepService _stepService;
 
   AssetRecipeService(this._stepService);
 
-  void setFavorite(int id,
+  void setFavorite(dynamic id,
       {required bool isFavorite, required Function(Recipe recipe) onChange}) {
     final find = _all.firstWhere((element) => element.id == id);
     final index = _all.indexOf(find);
@@ -127,7 +127,7 @@ class AssetRecipeService {
     onChange(copy);
   }
 
-  void start(int id,
+  void start(dynamic id,
       {required bool isStarted,
       required Function(Recipe recipe, List<RecipeStep> steps) onChange}) {
     final find = _all.firstWhere((element) => element.id == id);
@@ -141,7 +141,7 @@ class AssetRecipeService {
     onChange(copy, _stepService.byRecipe(id));
   }
 
-  RecipeInfo getInfo(int id) {
+  RecipeInfo getInfo(dynamic id) {
     return RecipeInfo(recipe: _byId(id), steps: _stepService.byRecipe(id));
   }
 

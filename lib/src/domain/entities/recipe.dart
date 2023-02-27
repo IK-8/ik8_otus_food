@@ -2,7 +2,7 @@ import 'package:ik8_otus_food/src/domain/entities/ingredient.dart';
 
 
 abstract class Recipe {
-  final int id;
+  final dynamic id;
   final String image;
   final String title;
   final int seconds;

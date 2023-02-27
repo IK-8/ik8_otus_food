@@ -15,7 +15,10 @@ Future<void> initializeRecipeComments(GetIt injector) async {
     injector.registerSingleton(GetAllCommentsByRecipeUseCase(injector()));
     injector.registerSingleton(CreateRecipeCommentUseCase(injector()));
 
-    injector.registerFactoryParam((int recipeId, _) =>
+    injector.registerFactoryParam((dynamic recipeId, _) =>
         RecipeCommentsCubit(injector(), injector(), recipeId: recipeId));
-  } catch (_) {}
+  } catch (_) {
+
+    print(_);
+  }
 }

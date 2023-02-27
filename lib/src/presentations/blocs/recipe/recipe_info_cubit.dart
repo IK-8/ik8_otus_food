@@ -8,7 +8,7 @@ import '../../../domain/usecase/recipe/start_recipe.dart';
 import '../../../domain/usecase/recipe_steps/set_checked_step.dart';
 
 class RecipeInfoCubit extends RequestStateCubit<RecipeInfo> {
-  final int id;
+  final dynamic id;
   final GetAllRecipeStepUseCase _getSteps;
   final SetFavoriteRecipeUseCase _setFavorite;
   final SetCheckedRecipeStepUseCase _checkStep;
@@ -41,7 +41,7 @@ class RecipeInfoCubit extends RequestStateCubit<RecipeInfo> {
     emit(state.updateData((data) => data?.copyWith(steps: list)));
   }
 
-  checkStep(int stepId, bool isChecked) {
+  checkStep(dynamic stepId, bool isChecked) {
     emit(state.setOperationLoading());
     _checkStep(
         id: stepId,

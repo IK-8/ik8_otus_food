@@ -15,6 +15,7 @@ enum Measure {
   clove
 }
 
+
 class IngredientMeasure {
   final Measure? type;
   final String? title;

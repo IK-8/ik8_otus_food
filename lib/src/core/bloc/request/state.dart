@@ -60,3 +60,7 @@ extension RequestStateInfoEx on RequestStateInfo {
 
   bool get isFull => state.isFull;
 }
+
+extension RequestStateListInfoEx<T> on RequestStateInfo<List<T>> {
+  List<T> get list => data ?? [];
+}

@@ -6,7 +6,7 @@ class GetAllCommentsByRecipeUseCase {
 
   GetAllCommentsByRecipeUseCase(this._repository);
 
-  List<RecipeComment> call(int recipeId) {
+  List<RecipeComment> call(dynamic recipeId) {
     return _repository.byRecipe(recipeId);
   }
 }

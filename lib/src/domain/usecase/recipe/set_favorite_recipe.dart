@@ -7,7 +7,7 @@ class SetFavoriteRecipeUseCase {
   SetFavoriteRecipeUseCase(this._repository);
 
   call(
-      {required int id,
+      {required dynamic id,
       required bool isFavorite,
       required Function(Recipe recipe) onChange}) {
     _repository.setFavorite(id, isFavorite: isFavorite, onChange: onChange);

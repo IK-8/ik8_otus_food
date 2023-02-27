@@ -7,7 +7,7 @@ class GetRecipeInfoUseCase {
 
   GetRecipeInfoUseCase(this._repository);
 
-  RecipeInfo call(int id) {
+  RecipeInfo call(dynamic id) {
     return _repository.infoById(id);
   }
 }

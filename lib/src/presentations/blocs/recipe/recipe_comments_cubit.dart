@@ -5,7 +5,7 @@ import '../../../domain/entities/comment.dart';
 import '../../../domain/usecase/recipe_comments/get_all_comments_by_recipe.dart';
 
 class RecipeCommentsCubit extends RequestStateCubit<List<RecipeComment>> {
-  final int recipeId;
+  final dynamic recipeId;
   final GetAllCommentsByRecipeUseCase _get;
   final CreateRecipeCommentUseCase _create;
 

@@ -1,8 +1,8 @@
 abstract class RecipeStep {
-  final int id;
-  final int recipeId;
+  final dynamic id;
+  final dynamic recipeId;
   final String title;
-  final int seconds;
+  final dynamic seconds;
   final bool isChecked;
 
   const RecipeStep(

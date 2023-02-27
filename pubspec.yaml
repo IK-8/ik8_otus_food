@@ -49,6 +49,8 @@ dependencies:
   get_it: ^7.2.0
   intl: ^0.17.0
   widget_mask: ^1.0.0+0
+
+  dio: ^5.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

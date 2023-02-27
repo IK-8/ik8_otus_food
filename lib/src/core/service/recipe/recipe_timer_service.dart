@@ -16,14 +16,14 @@ class RecipeTimerService {
     _idsValue.value = _idTimerMap.keys.toSet();
   }
 
-  start(int id, int seconds) {
+  start(dynamic id, int seconds) {
     final currentTimer = _idTimerMap[id];
     currentTimer?.dispose();
     _idTimerMap[id] = TimerService(Duration(seconds: seconds));
     updateIds();
   }
 
-  stop(int id) {
+  stop(dynamic id) {
     final currentTimer = _idTimerMap[id];
     currentTimer?.dispose();
     _idTimerMap.remove(id);

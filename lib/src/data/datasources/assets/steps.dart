@@ -53,7 +53,7 @@ class AssetRecipeStepService {
   ];
 
 
-  void setCheckedByRecipe(int recipeId, bool isChecked) {
+  void setCheckedByRecipe(dynamic recipeId, bool isChecked) {
     for (var i = 0; i < _all.length; i++) {
       var item = _all[i];
       if (item.recipeId == recipeId) {
@@ -62,7 +62,7 @@ class AssetRecipeStepService {
     }
   }
 
-  void setChecked(int id, bool isChecked) {
+  void setChecked(dynamic id, bool isChecked) {
     for (var i = 0; i < _all.length; i++) {
       var item = _all[i];
       if (item.id == id) {
@@ -72,10 +72,10 @@ class AssetRecipeStepService {
     }
   }
 
-  List<AssetRecipeStep> byRecipe(int recipeId) =>
+  List<AssetRecipeStep> byRecipe(dynamic recipeId) =>
       _all.where((element) => element.recipeId == recipeId).toList();
 
-  void setStepChecked(int id,
+  void setStepChecked(dynamic id,
       {required bool isChecked,
       required Function(List<RecipeStep> steps) onChange}) {
     for (var i = 0; i < _all.length; i++) {

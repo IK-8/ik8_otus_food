@@ -7,21 +7,37 @@ import 'package:ik8_otus_food/src/domain/entities/step.dart';
 import '../../../core/service/recipe/recipe_timer_service.dart';
 import '../../../domain/entities/recipe_info.dart';
 import '../../../domain/repositories/recipe_repository.dart';
+import '../../datasources/api/recipe_api_service.dart';
 import '../../datasources/assets/recipe.dart';
 
 class RecipeRepositoryImpl extends RecipeRepository {
   final RecipeTimerService _timerService;
   final AssetRecipeService _service;
   final AssetRecipeStepService _stepService;
+  final RecipeApiService _api;
 
-  RecipeRepositoryImpl(this._service, this._stepService, this._timerService);
+  RecipeRepositoryImpl(
+      this._service, this._stepService, this._timerService, this._api);
+
+  // @override
+  // List<Recipe> get all => ;
 
   @override
-  List<Recipe> get all => _service.all;
+  void getAll({
+    required Function(List<Recipe> list) onResponse,
+  }) {
+    _api.getRecipeList(
+      onResponse: (list) {
+        onResponse(list);
+      },
+      onConnectionError: () {},
+    );
+    // onResponse(_service.all);
+  }
 
   @override
   void setFavorite(
-    int id, {
+      dynamic id, {
     required bool isFavorite,
     required Function(Recipe recipe) onChange,
   }) {
@@ -30,7 +46,7 @@ class RecipeRepositoryImpl extends RecipeRepository {
 
   @override
   void start(
-    int id, {
+      dynamic id, {
     required bool isStarted,
     required Function(Recipe recipe, List<RecipeStep> steps) onChange,
   }) {
@@ -43,20 +59,20 @@ class RecipeRepositoryImpl extends RecipeRepository {
         } else {
           _timerService.stop(id);
         }
-        onChange(recipe,steps);
+        onChange(recipe, steps);
       },
     );
   }
 
   @override
-  RecipeInfo infoById(int id) {
+  RecipeInfo infoById(dynamic id) {
     return _service.getInfo(id);
   }
 
   @override
   void setStepChecked(
-    int id, {
-    required int recipeId,
+    dynamic id, {
+    required dynamic recipeId,
     required bool isChecked,
     required Function(List<RecipeStep> steps) onChange,
   }) {
@@ -68,19 +84,19 @@ class RecipeRepositoryImpl extends RecipeRepository {
   }
 
   @override
-  List<RecipeStep> recipeSteps(int recipeId) {
+  List<RecipeStep> recipeSteps(dynamic recipeId) {
     return _stepService.byRecipe(recipeId);
   }
 
   @override
   StreamSubscription<List<Recipe>> subscribeList(
       {required Function(List<Recipe> list) onData}) {
-    return _service.subscribeList(onData: onData);
+    return _api.subscribeList(onData: onData);
   }
 
   @override
   StreamSubscription<bool> subscribeActiveTimer({
-    required int recipeId,
+    required dynamic recipeId,
     required void Function(TimerService? activeService) onChange,
   }) {
     onChange(_timerService.idTimerMap[recipeId]);

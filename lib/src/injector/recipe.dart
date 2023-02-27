@@ -8,6 +8,7 @@ import 'package:ik8_otus_food/src/domain/usecase/recipe/subscribe_recipe_list.da
 import 'package:ik8_otus_food/src/domain/usecase/recipe_steps/get_all_recipe_step.dart';
 
 import '../core/service/recipe/recipe_timer_service.dart';
+import '../data/datasources/api/recipe_api_service.dart';
 import '../domain/entities/recipe.dart';
 import '../domain/usecase/recipe/get_recipe_info.dart';
 import '../domain/usecase/recipe/subscribe_recipe_timer.dart';
@@ -20,11 +21,12 @@ import '../presentations/blocs/recipe/recipe_timer_cubit.dart';
 
 Future<void> initializeRecipe(GetIt injector) async {
   try {
+    injector.registerSingleton(RecipeApiService(injector()));
     injector.registerSingleton(AssetRecipeStepService());
     injector.registerSingleton(RecipeTimerService());
     injector.registerSingleton(AssetRecipeService(injector()));
     injector.registerSingleton<RecipeRepository>(
-        RecipeRepositoryImpl(injector(), injector(), injector()));
+        RecipeRepositoryImpl(injector(), injector(), injector(), injector()));
 
     injector.registerSingleton(SubscribeRecipeListUseCase(injector()));
     injector.registerSingleton(GetAllRecipeUseCase(injector()));
@@ -35,10 +37,13 @@ Future<void> initializeRecipe(GetIt injector) async {
     injector.registerSingleton(SubscribeRecipeTimerUseCase(injector()));
     injector.registerSingleton(GetAllRecipeStepUseCase(injector()));
 
-    injector.registerFactory(() => RecipeListCubit(injector()));
-    injector.registerFactoryParam((int id, _) => RecipeTimerCubit(injector(), id: id,));
+    injector.registerFactory(() => RecipeListCubit(injector(),injector()));
+    injector.registerFactoryParam((dynamic id, _) => RecipeTimerCubit(injector(), id: id,));
     injector.registerFactoryParam((Recipe data, _) => RecipeInfoCubit(
         injector(), injector(), injector(), injector(),
         data: data));
-  } catch (_) {}
+  } catch (_) {
+
+    print(_);
+  }
 }
