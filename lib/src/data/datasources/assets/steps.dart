@@ -52,8 +52,6 @@ class AssetRecipeStepService {
     ),
   ];
 
-  static AssetRecipeStep _byId(int id) =>
-      _all.firstWhere((element) => element.id == id);
 
   void setCheckedByRecipe(int recipeId, bool isChecked) {
     for (var i = 0; i < _all.length; i++) {

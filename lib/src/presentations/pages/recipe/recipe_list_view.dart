@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:ik8_otus_food/src/core/bloc/bloc.dart';
 import 'package:ik8_otus_food/src/injector.dart';
 import '../../../config/theme/main.dart';
-import '../../blocs/recipe/list.dart';
+import '../../blocs/recipe/recipe_list_cubit.dart';
 import '../../widgets/widgets.dart';
-import 'current/current.dart';
+import 'current/current_recipe_page.dart';
 
 class RecipeListPage extends StatelessWidget {
   const RecipeListPage({Key? key}) : super(key: key);
@@ -30,15 +30,16 @@ class RecipeListView extends StatelessWidget {
         systemOverlayStyle: transparentSystemOverlayStyle,
         elevation: 0,
       ),
-      body: ListView.builder(
-        itemCount: list.length,
-        // cacheExtent: 5000,
-        addAutomaticKeepAlives: false,
-        physics: const TopBouncingScrollPhysics(),
-        itemBuilder: (BuildContext context, int index) {
-          var item = list[index];
-          return AutomaticKeepAlive(
-            child: InkWell(
+      backgroundColor: backgroundColor,
+      body: SafeArea(
+        child: ListView.builder(
+          itemCount: list.length,
+          // cacheExtent: 5000,
+          addAutomaticKeepAlives: false,
+          physics: const TopBouncingScrollPhysics(),
+          itemBuilder: (BuildContext context, int index) {
+            var item = list[index];
+            return InkWell(
               onTap: () {
                 Navigator.push(context, CurrentRecipePage.route(item));
               },
@@ -47,9 +48,9 @@ class RecipeListView extends StatelessWidget {
                     vertical: 12.0, horizontal: 16.0),
                 child: RecipeItem(item),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

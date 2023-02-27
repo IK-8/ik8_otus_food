@@ -53,7 +53,9 @@ extension AppLocalizationEx on AppLocalizations {
     return buffer.toString();
   }
 
-  String ddMMyyFormat(DateTime date){
+
+
+  String ddMMyyFormat(DateTime date) {
     return DateFormat.yMd(localeName).format(date);
   }
 }

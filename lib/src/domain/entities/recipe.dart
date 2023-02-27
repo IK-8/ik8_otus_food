@@ -1,7 +1,5 @@
-import 'package:ik8_otus_food/src/domain/entities/comment.dart';
 import 'package:ik8_otus_food/src/domain/entities/ingredient.dart';
 
-import 'step.dart';
 
 abstract class Recipe {
   final int id;

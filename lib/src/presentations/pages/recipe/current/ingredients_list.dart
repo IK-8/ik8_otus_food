@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../l10n/extension.dart';
-import '../../../blocs/recipe/info.dart';
-import '../../../widgets/ingredient/table.dart';
+import '../../../blocs/recipe/recipe_info_cubit.dart';
+import '../../../widgets/ingredient/ingredient.dart';
 
 class IngredientsList extends StatelessWidget {
   const IngredientsList({Key? key}) : super(key: key);

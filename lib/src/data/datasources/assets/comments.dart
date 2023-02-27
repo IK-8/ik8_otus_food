@@ -4,9 +4,6 @@ class AssetRecipeCommentsService {
   static var currentId = 0;
   static final _all = <AssetRecipeComment>[];
 
-  static AssetRecipeComment _byId(int id) =>
-      _all.firstWhere((element) => element.id == id);
-
   void create(
       {required int recipeId,
       required String text,

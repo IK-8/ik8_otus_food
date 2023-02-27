@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../blocs/recipe/info.dart';
+import '../../../blocs/recipe/recipe_info_cubit.dart';
 import '../../../widgets/widgets.dart';
 
 class RecipeInfoView extends StatelessWidget {
@@ -18,6 +18,7 @@ class RecipeInfoView extends StatelessWidget {
     if (data == null) {
       return const SizedBox();
     }
+    final isStarted = data.isStarted;
     return Column(
       children: [
         Row(
@@ -28,20 +29,22 @@ class RecipeInfoView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0, top: 8),
-                    child: Text(data.title,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 24)),
-                  ),
+                  if (!isStarted)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0, top: 8),
+                      child: Text(data.title,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 24)),
+                    ),
                   DurationView(data.seconds),
                 ],
               ),
             ),
-            FavoriteButton(
-              onChanged: (isSelect) => onChangeFavorite(context, isSelect),
-              value: data.isFavorite,
-            )
+            if (!isStarted)
+              FavoriteButton(
+                onChanged: (isSelect) => onChangeFavorite(context, isSelect),
+                value: data.isFavorite,
+              )
           ],
         ),
         Padding(
@@ -53,6 +56,7 @@ class RecipeInfoView extends StatelessWidget {
               child: Image.asset(
                 data.image,
                 fit: BoxFit.cover,
+                errorBuilder: foodErrorBuilder,
               ),
             ),
           ),

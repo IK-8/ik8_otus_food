@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../config/theme/main.dart';
+import 'package:ik8_otus_food/src/config/theme/main.dart';
 
 class ToggleOutlineFilledButton extends StatelessWidget {
   final bool outlined;
@@ -12,10 +11,10 @@ class ToggleOutlineFilledButton extends StatelessWidget {
 
   const ToggleOutlineFilledButton(
       {Key? key,
-      this.outlined = true,
-      required this.outlinedLabel,
-      required this.filledLabel,
-      required this.onPressed})
+        this.outlined = true,
+        required this.outlinedLabel,
+        required this.filledLabel,
+        required this.onPressed})
       : super(key: key);
 
   @override
@@ -51,35 +50,6 @@ class ToggleOutlineFilledButton extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class FavoriteButton extends StatelessWidget {
-  final ValueChanged<bool> onChanged;
-  final bool value;
-
-  const FavoriteButton({Key? key, required this.onChanged, this.value = false})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        onChanged(!value);
-      },
-      splashColor: value ?  null : const Color(0x66e74c3c),
-      padding: EdgeInsets.zero,
-      iconSize: 30,
-      icon: value
-          ? const Icon(
-              Icons.favorite,
-              color: Color(0xffE74C3C),
-            )
-          : const Icon(
-              Icons.favorite,
-              color: Color(0xff3B3B3B),
-            ),
     );
   }
 }

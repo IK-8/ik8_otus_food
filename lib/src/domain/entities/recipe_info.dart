@@ -1,6 +1,5 @@
 import 'recipe.dart';
 import 'step.dart';
-import 'comment.dart';
 
 class RecipeInfo {
   final Recipe recipe;
