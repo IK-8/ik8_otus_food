@@ -1,6 +1,6 @@
 import 'package:ik8_otus_food/src/domain/entities/recipe.dart';
 
-class AssetRecipe extends Recipe {
+class AssetRecipe extends RecipeData {
   const AssetRecipe(
       {required super.image,
       required super.title,

@@ -23,7 +23,9 @@ class CurrentRecipePage extends StatefulWidget {
   const CurrentRecipePage(this.data, {Key? key}) : super(key: key);
 
   static Route route(Recipe data) {
+
     return MaterialPageRoute(builder: (_) => CurrentRecipePage(data));
+
   }
 
   @override
@@ -41,6 +43,8 @@ class _CurrentRecipePageState extends State<CurrentRecipePage> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<RecipeCommentsCubit>(
@@ -49,6 +53,8 @@ class _CurrentRecipePageState extends State<CurrentRecipePage> {
             create: (_) => injector(param1: widget.data)..refreshSteps()),
         BlocProvider<RecipeTimerCubit>(
           create: (_) {
+
+
             _timerCubit?.dispose();
             _timerCubit = injector(param1: widget.data.id)..initialize();
             return _timerCubit!;
@@ -94,9 +100,12 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
   @override
   void initState() {
     super.initState();
+
+
     commentFocusNode.addListener(() {
       commentFieldHasFocus = commentFocusNode.hasFocus;
     });
+
   }
 
   @override
@@ -109,6 +118,8 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
 
   @override
   Widget build(BuildContext context) {
+
+
     final commentInputActive =
         commentFieldHasFocus || MediaQuery.of(context).viewInsets.bottom != 0.0;
     final isStarted = context.select(

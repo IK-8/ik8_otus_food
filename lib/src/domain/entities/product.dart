@@ -1,6 +1,6 @@
 import 'measure.dart';
 
-abstract class RecipeProduct {
+ class RecipeProduct {
   final IngredientMeasure measure;
   final String name;
 

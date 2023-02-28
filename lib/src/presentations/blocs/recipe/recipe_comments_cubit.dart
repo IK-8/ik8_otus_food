@@ -15,12 +15,12 @@ class RecipeCommentsCubit extends RequestStateCubit<List<RecipeComment>> {
     required this.recipeId,
   }) : super();
 
-  update() {
+  Future<void> update() async {
     emit(state.setLoading());
     refresh();
   }
 
-  refresh() {
+  Future<void> refresh() async {
     final list = _get(recipeId);
     emit(state.setFull(list));
   }

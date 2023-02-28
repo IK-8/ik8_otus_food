@@ -1,58 +1,80 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:ik8_otus_food/src/data/models/api/recipe.dart';
+import 'package:ik8_otus_food/src/domain/entities/recipe_info.dart';
 
 import '../../../core/service/stream_value.dart';
 import '../../../domain/entities/recipe.dart';
+import '../../../domain/entities/step.dart';
+import 'cache_service.dart';
+import 'steps_api_service.dart';
 
 class RecipeApiService {
   final Dio _dio;
+  final StepsApiService _stepsApiService;
+  final ApiCacheService _cache;
 
-  RecipeApiService(this._dio);
+  RecipeApiService(this._dio, this._cache, this._stepsApiService);
 
-  void _pull() {
-    // getRecipeList();
+  void start(dynamic id,
+      {required bool isStarted,
+      required Function(Recipe recipe, List<RecipeStep> steps) onChange}) {
+    final all = _streamController.value;
+    final find = all.firstWhere((element) => element.id == id);
+    final index = all.indexOf(find);
+    if (isStarted == false) {
+      _stepsApiService.setCheckedByRecipe(id, false);
+    }
+    final copy = find.copyWith(isStarted: isStarted);
+    all[index] = copy;
+    _streamController.value = all;
+    onChange(copy, _stepsApiService.byRecipe(id));
+  }
+
+  void setFavorite(dynamic id,
+      {required bool isFavorite, required Function(Recipe recipe) onChange}) {
+    final all = _streamController.value;
+    final find = all.firstWhere((element) => element.id == id);
+    final index = all.indexOf(find);
+    final copy = find.copyWith(isFavorite: isFavorite);
+    all[index] = copy;
+    _streamController.value = all;
+    onChange(copy);
   }
 
   Future<void> getRecipeList({
     required Function(List<Recipe> list) onResponse,
-    required Function()? onConnectionError,
+    required Function(List<Recipe> list)? onConnectionError,
   }) async {
     try {
-      // _streamControllerIsInit = true;
-      // www.themealdb.com/api/json/v1/1/
       final response = await _dio.get('search.php?s=A');
-
       List<dynamic> data = (response.data as Map)['meals'];
       final list = data.map((e) => RecipeModel.fromJson(e)).toList();
-      print(data);
+      _stepsApiService.pushByRecipe(data);
+      _cache.setRecipeList(list);
+      _streamController.value = list;
       onResponse(list);
-      _streamController().add(list);
-    } on SocketException catch (e) {
-      print('Инета нет');
+    } on DioError catch (_) {
+      final list = _cache.getRecipeList();
+      _streamController.value = list;
+      _stepsApiService.setCached();
+      onConnectionError?.call(list);
     }
   }
 
+  late final _streamController = StreamValue<List<Recipe>>([]);
+
   StreamSubscription<List<Recipe>> subscribeList(
       {required Function(List<Recipe> list) onData}) {
-    // if (!_streamControllerIsInit) {
-    //   _pull();
-    //   _streamControllerIsInit = true;
-    // } else {
-    //   onData(_streamController.value);
-    // }
     return _streamController().stream.listen((event) {
       onData(event);
     });
   }
 
-  late final _streamController = StreamValue<List<Recipe>>([]);
-  bool _streamControllerIsInit = false;
+  Recipe _byId(dynamic id) =>
+      (_streamController.value).firstWhere((element) => element.id == id);
 
-// refresh() {
-//   _streamController.add([]);
-//   getRecipeList();
-// }
+  RecipeInfo getInfo(id) {
+    return RecipeInfo(recipe: _byId(id), steps: _stepsApiService.byRecipe(id));
+  }
 }

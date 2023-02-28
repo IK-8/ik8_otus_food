@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:ik8_otus_food/src/data/datasources/api/steps_api_service.dart';
 import 'package:ik8_otus_food/src/data/datasources/assets/recipe.dart';
 import 'package:ik8_otus_food/src/data/datasources/assets/steps.dart';
 import 'package:ik8_otus_food/src/data/repositories/assets/recipe_repository.dart';
@@ -21,12 +22,13 @@ import '../presentations/blocs/recipe/recipe_timer_cubit.dart';
 
 Future<void> initializeRecipe(GetIt injector) async {
   try {
-    injector.registerSingleton(RecipeApiService(injector()));
+    injector.registerSingleton(StepsApiService(injector()));
+    injector.registerSingleton(RecipeApiService(injector(),injector(),injector()));
     injector.registerSingleton(AssetRecipeStepService());
     injector.registerSingleton(RecipeTimerService());
     injector.registerSingleton(AssetRecipeService(injector()));
     injector.registerSingleton<RecipeRepository>(
-        RecipeRepositoryImpl(injector(), injector(), injector(), injector()));
+        RecipeRepositoryImpl(injector(), injector(), injector()));
 
     injector.registerSingleton(SubscribeRecipeListUseCase(injector()));
     injector.registerSingleton(GetAllRecipeUseCase(injector()));

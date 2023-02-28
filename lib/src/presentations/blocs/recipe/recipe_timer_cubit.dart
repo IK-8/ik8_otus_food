@@ -16,7 +16,7 @@ class RecipeTimerCubit extends Cubit<Duration?> {
   StreamSubscription<bool>? _timerSubscription;
   StreamSubscription<Duration>? _durationSubscription;
 
-  void initialize() {
+  Future<void> initialize() async {
     _timerSubscription = _subscribeRecipeTimer(
         recipeId: id,
         onChange: (timer) {
@@ -27,6 +27,7 @@ class RecipeTimerCubit extends Cubit<Duration?> {
             emit(null);
           }
         });
+
   }
 
   void _subscribeTimer(TimerService timer) {

@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:ik8_otus_food/src/data/models/api/ingredient.dart';
 import 'package:ik8_otus_food/src/domain/entities/recipe.dart';
 
-class RecipeModel extends Recipe {
+class RecipeModel extends RecipeData {
   RecipeModel({
     required super.id,
     required super.image,
@@ -33,6 +33,7 @@ class RecipeModel extends Recipe {
       seconds: seconds,
       isFavorite: isFavorite ?? this.isFavorite,
       isStarted: isStarted ?? this.isStarted,
+      ingredients: ingredients,
     );
   }
 }

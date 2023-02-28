@@ -3,7 +3,7 @@ import 'package:ik8_otus_food/src/domain/entities/measure.dart';
 
 import 'product.dart';
 
-class IngredientModel extends RecipeIngredient {
+class IngredientModel extends RecipeIngredientData {
   IngredientModel({required super.product, super.count});
 
   static List<IngredientModel> fromRecipe(Map<String, dynamic> json) {
@@ -13,14 +13,26 @@ class IngredientModel extends RecipeIngredient {
       if (name == null || name.isEmpty) {
         break;
       }
-      final measureValues = (json['strMeasure$i'] as String? ?? '').split(' ')
+      final strMeasure = (json['strMeasure$i'] as String? ?? '').trim();
+      if (strMeasure == 'As required') {
+        list.add(
+          IngredientModel(
+            product: ProductModel(
+              name: name,
+              measure: IngredientMeasure.empty,
+            ),
+          ),
+        );
+        break;
+      }
+      final measureValues = strMeasure.split(' ')
         ..removeWhere((element) => element.trim().isEmpty);
       if (measureValues.isEmpty) {
         list.add(
           IngredientModel(
             product: ProductModel(
               name: name,
-              measure: const IngredientMeasure(Measure.wt),
+              measure: IngredientMeasure.empty,
             ),
           ),
         );
@@ -40,6 +52,9 @@ class IngredientModel extends RecipeIngredient {
                 ..writeAll([...measureValues]..removeAt(0), ' '))
               .toString();
           final measureType = parsedMeasureValues[productMeasure];
+          if (measureType == null) {
+            print(productMeasure);
+          }
           list.add(
             IngredientModel(
               count: count,
@@ -72,5 +87,12 @@ double? decimalTryParse(String value) {
 
 Map<String, Measure> parsedMeasureValues = {
   'tsp': Measure.tsp,
+  'tsp shredded': Measure.tsp,
   'tbs': Measure.tbs,
+  'tbs chopped': Measure.tbs,
+  'tblsp': Measure.tbs,
+  'tbls': Measure.tbs,
+  'cup': Measure.cup,
+  'cups': Measure.cup,
+  'kg': Measure.wt,
 };

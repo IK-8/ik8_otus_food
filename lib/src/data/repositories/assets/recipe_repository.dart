@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:ik8_otus_food/src/data/datasources/assets/steps.dart';
 import 'package:ik8_otus_food/src/domain/entities/recipe.dart';
 import 'package:ik8_otus_food/src/domain/entities/step.dart';
 
@@ -8,19 +7,18 @@ import '../../../core/service/recipe/recipe_timer_service.dart';
 import '../../../domain/entities/recipe_info.dart';
 import '../../../domain/repositories/recipe_repository.dart';
 import '../../datasources/api/recipe_api_service.dart';
-import '../../datasources/assets/recipe.dart';
+import '../../datasources/api/steps_api_service.dart';
 
 class RecipeRepositoryImpl extends RecipeRepository {
   final RecipeTimerService _timerService;
-  final AssetRecipeService _service;
-  final AssetRecipeStepService _stepService;
   final RecipeApiService _api;
+  final StepsApiService _stepsApi;
 
   RecipeRepositoryImpl(
-      this._service, this._stepService, this._timerService, this._api);
-
-  // @override
-  // List<Recipe> get all => ;
+    this._timerService,
+    this._api,
+    this._stepsApi,
+  );
 
   @override
   void getAll({
@@ -30,27 +28,28 @@ class RecipeRepositoryImpl extends RecipeRepository {
       onResponse: (list) {
         onResponse(list);
       },
-      onConnectionError: () {},
+      onConnectionError: (cache) {
+        onResponse(cache);
+      },
     );
-    // onResponse(_service.all);
   }
 
   @override
   void setFavorite(
-      dynamic id, {
+    dynamic id, {
     required bool isFavorite,
     required Function(Recipe recipe) onChange,
   }) {
-    _service.setFavorite(id, isFavorite: isFavorite, onChange: onChange);
+    _api.setFavorite(id, isFavorite: isFavorite, onChange: onChange);
   }
 
   @override
   void start(
-      dynamic id, {
+    dynamic id, {
     required bool isStarted,
     required Function(Recipe recipe, List<RecipeStep> steps) onChange,
   }) {
-    _service.start(
+    _api.start(
       id,
       isStarted: isStarted,
       onChange: (recipe, steps) {
@@ -66,7 +65,7 @@ class RecipeRepositoryImpl extends RecipeRepository {
 
   @override
   RecipeInfo infoById(dynamic id) {
-    return _service.getInfo(id);
+    return _api.getInfo(id);
   }
 
   @override
@@ -76,7 +75,7 @@ class RecipeRepositoryImpl extends RecipeRepository {
     required bool isChecked,
     required Function(List<RecipeStep> steps) onChange,
   }) {
-    return _stepService.setStepChecked(
+    return _stepsApi.setStepChecked(
       id,
       isChecked: isChecked,
       onChange: onChange,
@@ -85,7 +84,7 @@ class RecipeRepositoryImpl extends RecipeRepository {
 
   @override
   List<RecipeStep> recipeSteps(dynamic recipeId) {
-    return _stepService.byRecipe(recipeId);
+    return _stepsApi.byRecipe(recipeId);
   }
 
   @override
