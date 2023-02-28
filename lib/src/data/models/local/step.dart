@@ -3,7 +3,7 @@ import 'package:ik8_otus_food/src/domain/entities/step.dart';
 
 part 'step.g.dart';
 
-@HiveType(typeId: 4)
+@HiveType(typeId: 134)
 class LocalRecipeStep extends RecipeStep {
   @HiveField(0)
   @override

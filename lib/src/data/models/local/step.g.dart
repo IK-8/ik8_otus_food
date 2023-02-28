@@ -8,7 +8,7 @@ part of 'step.dart';
 
 class LocalRecipeStepAdapter extends TypeAdapter<LocalRecipeStep> {
   @override
-  final int typeId = 4;
+  final int typeId = 134;
 
   @override
   LocalRecipeStep read(BinaryReader reader) {

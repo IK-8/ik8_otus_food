@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 part 'measure.g.dart';
-@HiveType(typeId: 3)
+@HiveType(typeId: 133)
 enum Measure {
   @HiveField(0)
 

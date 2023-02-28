@@ -6,7 +6,7 @@ import '../../../domain/entities/measure.dart';
 
 part 'ingredient.g.dart';
 
-@HiveType(typeId: 2)
+@HiveType(typeId: 132)
 class LocalRecipeIngredient extends RecipeIngredient with HiveObjectMixin {
   @HiveField(0)
   @override

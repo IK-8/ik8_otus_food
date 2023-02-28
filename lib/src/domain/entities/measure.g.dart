@@ -8,7 +8,7 @@ part of 'measure.dart';
 
 class MeasureAdapter extends TypeAdapter<Measure> {
   @override
-  final int typeId = 3;
+  final int typeId = 133;
 
   @override
   Measure read(BinaryReader reader) {

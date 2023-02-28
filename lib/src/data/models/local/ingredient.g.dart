@@ -8,7 +8,7 @@ part of 'ingredient.dart';
 
 class LocalRecipeIngredientAdapter extends TypeAdapter<LocalRecipeIngredient> {
   @override
-  final int typeId = 2;
+  final int typeId = 132;
 
   @override
   LocalRecipeIngredient read(BinaryReader reader) {
