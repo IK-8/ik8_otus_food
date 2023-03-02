@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:flutter/services.dart';
 import 'package:ik8_otus_food/l10n/extension.dart';
 import 'package:ik8_otus_food/src/core/bloc/bloc.dart';
@@ -8,6 +9,7 @@ import 'package:ik8_otus_food/src/injector.dart';
 import 'package:ik8_otus_food/src/presentations/blocs/recipe/recipe_comments_cubit.dart';
 import 'package:ik8_otus_food/src/presentations/blocs/recipe/recipe_info_cubit.dart';
 import 'package:ik8_otus_food/src/presentations/pages/recipe/current/step_list.dart';
+import '../../../../config/route/slide_and_fade_reverse_transition.dart';
 import '../../../../config/theme/main.dart';
 import '../../../blocs/recipe/recipe_timer_cubit.dart';
 import '../../../widgets/widgets.dart';
@@ -23,9 +25,7 @@ class CurrentRecipePage extends StatefulWidget {
   const CurrentRecipePage(this.data, {Key? key}) : super(key: key);
 
   static Route route(Recipe data) {
-
-    return MaterialPageRoute(builder: (_) => CurrentRecipePage(data));
-
+    return slideAndReverseFadeTransitionRoute(CurrentRecipePage(data));
   }
 
   @override
@@ -43,8 +43,6 @@ class _CurrentRecipePageState extends State<CurrentRecipePage> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return MultiBlocProvider(
       providers: [
         BlocProvider<RecipeCommentsCubit>(
@@ -53,8 +51,6 @@ class _CurrentRecipePageState extends State<CurrentRecipePage> {
             create: (_) => injector(param1: widget.data)..refreshSteps()),
         BlocProvider<RecipeTimerCubit>(
           create: (_) {
-
-
             _timerCubit?.dispose();
             _timerCubit = injector(param1: widget.data.id)..initialize();
             return _timerCubit!;
@@ -101,11 +97,9 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
   void initState() {
     super.initState();
 
-
     commentFocusNode.addListener(() {
       commentFieldHasFocus = commentFocusNode.hasFocus;
     });
-
   }
 
   @override
@@ -118,8 +112,6 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
 
   @override
   Widget build(BuildContext context) {
-
-
     final commentInputActive =
         commentFieldHasFocus || MediaQuery.of(context).viewInsets.bottom != 0.0;
     final isStarted = context.select(
