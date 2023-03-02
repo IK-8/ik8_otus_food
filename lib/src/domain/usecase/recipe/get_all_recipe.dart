@@ -8,7 +8,11 @@ class GetAllRecipeUseCase {
 
   void call({
     required Function(List<Recipe> list) onResponse,
+    required Function(String? error) onError,
   }) {
-    return _repository.getAll(onResponse: onResponse);
+    return _repository.getAll(
+      onResponse: onResponse,
+      onError: onError,
+    );
   }
 }

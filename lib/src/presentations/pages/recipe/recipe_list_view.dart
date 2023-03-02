@@ -48,31 +48,51 @@ class RecipeListView extends StatelessWidget {
         elevation: 0,
       ),
       backgroundColor: backgroundColor,
-      body: state.isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : SafeArea(
-              child: ListView.builder(
-                itemCount: state.list.length,
-                // cacheExtent: 5000,
-                addAutomaticKeepAlives: false,
-                physics: const TopBouncingScrollPhysics(),
-                itemBuilder: (BuildContext context, int index) {
-                  var item = state.list[index];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(context, CurrentRecipePage.route(item));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12.0, horizontal: 16.0),
-                      child: RecipeItem(item),
-                    ),
-                  );
+      body: state.when(
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        full: () => SafeArea(
+          child: ListView.builder(
+            itemCount: state.list.length,
+            addAutomaticKeepAlives: false,
+            physics: const TopBouncingScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              var item = state.list[index];
+              return InkWell(
+                onTap: () {
+                  Navigator.push(context, CurrentRecipePage.route(item));
                 },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 16.0),
+                  child: RecipeItem(item),
+                ),
+              );
+            },
+          ),
+        ),
+        error: () => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                state.error ?? 'Ошибка',
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  context.read<RecipeListCubit>().pull();
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Перезагрузить'),
+              ),
+            ],
+          ),
+        ),
+        other: () => const SizedBox(),
+      ),
     );
   }
 }

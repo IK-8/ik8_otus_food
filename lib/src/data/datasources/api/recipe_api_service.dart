@@ -44,21 +44,32 @@ class RecipeApiService {
 
   Future<void> getRecipeList({
     required Function(List<Recipe> list) onResponse,
+    required Function(String? error) onError,
     required Function(List<Recipe> list)? onConnectionError,
   }) async {
     try {
-      final response = await _dio.get('search.php?s=A');
-      List<dynamic> data = (response.data as Map)['meals'];
-      final list = data.map((e) => RecipeModel.fromJson(e)).toList();
-      _stepsApiService.pushByRecipe(data);
-      _cache.setRecipeList(list);
-      _streamController.value = list;
-      onResponse(list);
-    } on DioError catch (_) {
-      final list = _cache.getRecipeList();
-      _streamController.value = list;
-      _stepsApiService.setCached();
-      onConnectionError?.call(list);
+      try {
+        final response = await _dio.get('search.php?s=A');
+        if (response.statusCode == 200) {
+          List<dynamic> data = (response.data as Map)['meals'];
+          final list = data.map((e) => RecipeModel.fromJson(e)).toList();
+
+          _stepsApiService.pushByRecipe(data);
+          _cache.setRecipeList(list);
+          _streamController.value = list;
+          onResponse(list);
+        } else {
+          onError('statusCode:${response.statusCode}'
+              '${response.statusMessage == null ? "" : "\n${response.statusMessage}"}');
+        }
+      } on DioError catch (_) {
+        final list = _cache.getRecipeList();
+        _streamController.value = list;
+        _stepsApiService.setCached();
+        onConnectionError?.call(list);
+      }
+    } catch (e) {
+      onError(e.toString());
     }
   }
 

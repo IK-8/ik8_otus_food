@@ -23,8 +23,10 @@ class RecipeRepositoryImpl extends RecipeRepository {
   @override
   void getAll({
     required Function(List<Recipe> list) onResponse,
+    required Function(String? error) onError,
   }) {
     _api.getRecipeList(
+      onError: onError,
       onResponse: (list) {
         onResponse(list);
       },

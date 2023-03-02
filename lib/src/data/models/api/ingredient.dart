@@ -25,7 +25,7 @@ class IngredientModel extends RecipeIngredientData {
         );
         break;
       }
-      final measureValues = strMeasure.split(' ')
+      final measureValues = strMeasure.trim().split(' ')
         ..removeWhere((element) => element.trim().isEmpty);
       if (measureValues.isEmpty) {
         list.add(
@@ -52,9 +52,6 @@ class IngredientModel extends RecipeIngredientData {
                 ..writeAll([...measureValues]..removeAt(0), ' '))
               .toString();
           final measureType = parsedMeasureValues[productMeasure];
-          if (measureType == null) {
-            print(productMeasure);
-          }
           list.add(
             IngredientModel(
               count: count,

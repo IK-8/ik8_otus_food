@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ik8_otus_food/src/domain/usecase/recipe/get_all_recipe.dart';
 
 import '../../../core/bloc/bloc.dart';
@@ -16,10 +14,15 @@ class RecipeListCubit extends RequestStateCubit<List<Recipe>> {
 
   void pull() {
     emit(state.setLoading());
-    _pull(onResponse: (list) {
-      emit(state.setFull(list));
-      _init();
-    });
+    _pull(
+      onResponse: (list) {
+        emit(state.setFull(list));
+        _init();
+      },
+      onError: (e) {
+        emit(state.setError(e));
+      },
+    );
   }
 
   _init() {

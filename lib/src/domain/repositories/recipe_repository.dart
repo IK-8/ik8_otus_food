@@ -9,7 +9,9 @@ import '../entities/recipe_info.dart';
 abstract class RecipeRepository {
   // List<Recipe> get all;
   void getAll({
+
     required Function(List<Recipe> list) onResponse,
+    required Function(String? error) onError,
   });
 
   // List<Recipe>
