@@ -55,7 +55,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
       _isChecked!.value = widget.value;
       setState(() {});
       if (_isChecked!.value) {
-        Future.delayed(const Duration(seconds: 2), () {
+        Future.delayed(const Duration(seconds: 3), () {
           if (mounted) {
             setState(() {
               isInitial = true;

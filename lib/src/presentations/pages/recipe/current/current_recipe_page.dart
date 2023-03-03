@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/physics.dart';
 import 'package:flutter/services.dart';
 import 'package:ik8_otus_food/l10n/extension.dart';
 import 'package:ik8_otus_food/src/core/bloc/bloc.dart';
@@ -24,8 +23,9 @@ class CurrentRecipePage extends StatefulWidget {
 
   const CurrentRecipePage(this.data, {Key? key}) : super(key: key);
 
-  static Route route(Recipe data) {
-    return slideAndReverseFadeTransitionRoute(CurrentRecipePage(data));
+  static Route route(Recipe data)  {
+    final page =  CurrentRecipePage(data);
+    return slideAndReverseFadeTransitionRoute(page);
   }
 
   @override
@@ -46,9 +46,13 @@ class _CurrentRecipePageState extends State<CurrentRecipePage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<RecipeCommentsCubit>(
-            create: (_) => injector(param1: widget.data.id)..update()),
+            create: (_) => injector(param1: widget.data.id)
+            ..update()
+            ),
         BlocProvider<RecipeInfoCubit>(
-            create: (_) => injector(param1: widget.data)..refreshSteps()),
+            create: (_) => injector(param1: widget.data)
+            ..refreshSteps()
+            ),
         BlocProvider<RecipeTimerCubit>(
           create: (_) {
             _timerCubit?.dispose();
@@ -92,6 +96,7 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
   final commentController = TextEditingController();
 
   final scrollController = ScrollController();
+  bool isView = false;
 
   @override
   void initState() {
@@ -99,6 +104,11 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
 
     commentFocusNode.addListener(() {
       commentFieldHasFocus = commentFocusNode.hasFocus;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        isView = true;
+      });
     });
   }
 
@@ -112,10 +122,14 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
 
   @override
   Widget build(BuildContext context) {
+    if (!isView) {
+      return const Scaffold();
+    }
     final commentInputActive =
         commentFieldHasFocus || MediaQuery.of(context).viewInsets.bottom != 0.0;
     final isStarted = context.select(
         (RecipeInfoCubit value) => value.state.data?.recipe.isStarted ?? false);
+
     return Scaffold(
       appBar: AppBar(
         elevation: isStarted ? 0 : 2,
