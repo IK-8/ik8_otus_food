@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ik8_otus_food/src/config/theme/main.dart';
+
+import '../../config/theme/main.dart';
+import 'animated/animated.dart';
 
 class AppCheckbox extends StatelessWidget {
   final ValueChanged<bool>? onChange;
@@ -11,23 +13,36 @@ class AppCheckbox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 20,
-      height: 20,
-      child: Checkbox(
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          value: isChecked,
-          fillColor: MaterialStateProperty.resolveWith((states) {
-            if (states.contains(MaterialState.disabled)) {
-              return greyColor;
-            }
-            return primaryDarkColor;
-          }),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(3.5)),
+      width: 40,
+      height: 40,
+      child: Center(
+        child: AnimatedPulsationSizedBox(
+          flag: isChecked,
+          child: FittedBox(
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: Checkbox(
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  value: isChecked,
+                  fillColor: MaterialStateProperty.resolveWith(
+                    (states) {
+                      if (states.contains(MaterialState.disabled)) {
+                        return greyColor;
+                      }
+                      return primaryDarkColor;
+                    },
+                  ),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(3.5)),
+                  ),
+                  onChanged: onChange == null
+                      ? null
+                      : (value) => onChange?.call(value ?? false)),
+            ),
           ),
-          onChanged: onChange == null
-              ? null
-              : (value) => onChange?.call(value ?? false)),
+        ),
+      ),
     );
   }
 }

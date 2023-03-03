@@ -59,15 +59,9 @@ class RecipeStepItem extends StatelessWidget {
               fit: FlexFit.tight,
               child: Column(
                 children: [
-                  SizedBox(
-                    width: 35,
-                    height: 35,
-                    child: FittedBox(
-                      child: AppCheckbox(
-                        onChange: enabled ? onSelect : null,
-                        isChecked: item.isChecked,
-                      ),
-                    ),
+                  AppCheckbox(
+                    onChange: enabled ? onSelect : null,
+                    isChecked: item.isChecked,
                   ),
                   const SizedBox(height: 14),
                   Text(
