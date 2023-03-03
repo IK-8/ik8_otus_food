@@ -26,8 +26,8 @@ class _FavoriteButtonState extends State<FavoriteButton> {
   void _onRiveInit(Artboard artboard) {
     final controller = StateMachineController.fromArtboard(artboard, 'States');
     artboard.addController(controller!);
-
     _isChecked = controller.findInput<bool>('IsChecked') as SMIBool;
+    _isChecked?.value = widget.value;
   }
 
   @override
