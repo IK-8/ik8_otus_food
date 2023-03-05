@@ -18,15 +18,17 @@ class DurationView extends StatelessWidget {
             size: 18,
           ),
           const SizedBox(width: 10),
-          Text(
-              AppLocalizations.of(context)!
-                  .hourMinuteSecondsDurationFormat(seconds),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                  color: primaryColor,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16)),
+          Flexible(
+            child: Text(
+                AppLocalizations.of(context)!
+                    .hourMinuteSecondsDurationFormat(seconds),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                    color: primaryColor,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16)),
+          ),
         ],
       );
   }

@@ -11,10 +11,12 @@ import 'package:ik8_otus_food/src/presentations/pages/recipe/current/step_list.d
 import '../../../../config/route/slide_and_fade_reverse_transition.dart';
 import '../../../../config/theme/main.dart';
 import '../../../blocs/recipe/recipe_timer_cubit.dart';
+import '../../../blocs/recipe_gallery/create_recipe_shot.dart';
 import '../../../widgets/widgets.dart';
 import 'comment_field.dart';
 import 'comment_list.dart';
 import 'ingredients_list.dart';
+import 'recipe_gallery_fragment.dart';
 import 'recipe_info_view.dart';
 import 'started_timer_view.dart';
 
@@ -52,6 +54,9 @@ class _CurrentRecipePageState extends State<CurrentRecipePage> {
         BlocProvider<RecipeInfoCubit>(
             create: (_) => injector(param1: widget.data)
             ..refreshSteps()
+            ),
+        BlocProvider<CreateRecipeShotCubit>(
+            create: (_) => injector(param1: widget.data.id)
             ),
         BlocProvider<RecipeTimerCubit>(
           create: (_) {
@@ -173,6 +178,7 @@ class _CurrentRecipePageViewState extends State<CurrentRecipePageView> {
                     child: Column(
                       children: [
                         const RecipeInfoView(),
+                        const RecipeGalleryFragment(),
                         const IngredientsList(),
                         const StepList(),
                         const Center(
