@@ -7,10 +7,10 @@ class GalleryService {
   GalleryService(this._box);
 
   Future<List<GalleryImage>> byRecipe(dynamic id) async {
-    var data = await _box.get(id);
+    var data = (await _box.get(id) as List<dynamic>?) ?? [];
     List<GalleryImage> list = [];
 
-    for(var item in data as List<dynamic>){
+    for(var item in data){
       if(item is GalleryImage) {
         list.add(item);
       }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ik8_otus_food/src/config/theme/main.dart';
 import 'package:ik8_otus_food/src/core/bloc/bloc.dart';
@@ -28,9 +29,22 @@ class RecipeGalleryFragment extends StatelessWidget {
             child: (ListView.builder(
               itemBuilder: (context, index) {
                 var item = listState.list[index];
-                return Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: Image.memory(item.data),
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ImageGalleryListPage(
+                          image: listState.list,
+                          currentIndex: index,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: Image.memory(item.data),
+                  ),
                 );
               },
               itemCount: listState.list.length,
@@ -78,6 +92,7 @@ class ImageGalleryPanel {
   final Set<String> detectionHide;
   final List<GalleryImage> list;
   final int currentIndex;
+  final bool isHide;
 
   GalleryImage get current => list[currentIndex];
 
@@ -85,15 +100,16 @@ class ImageGalleryPanel {
     this.currentIndex = 0,
     this.detectionHide = const {},
     required this.list,
+    this.isHide = false,
   });
 
-  ImageGalleryPanel hide(String name) {
+  ImageGalleryPanel hideDetection(String name) {
     return copyWith(
       detectionHide: {...detectionHide, name},
     );
   }
 
-  ImageGalleryPanel unhide(String name) {
+  ImageGalleryPanel unhideDetection(String name) {
     return copyWith(
       detectionHide: {...detectionHide}..remove(name),
     );
@@ -103,18 +119,24 @@ class ImageGalleryPanel {
     return copyWith(currentIndex: index);
   }
 
+  ImageGalleryPanel setHide(bool isHide) {
+    return copyWith(isHide: isHide);
+  }
+
   ImageGalleryPanel copyWith({
     Set<String>? detectionHide,
     int? currentIndex,
+    bool? isHide,
   }) {
     return ImageGalleryPanel(
       list: list,
       currentIndex: currentIndex ?? this.currentIndex,
       detectionHide: detectionHide ?? this.detectionHide,
+      isHide: isHide ?? this.isHide,
     );
   }
 
-  bool isHide(DetectedObject obj) {
+  bool detectionIsHide(DetectedObject obj) {
     return detectionHide.contains(obj.name);
   }
 }
@@ -132,22 +154,204 @@ class ImageGalleryViewerCubit extends Cubit<ImageGalleryPanel> {
 
   void attach(PageController controller) {
     controller.addListener(() {
-
+      final page = (controller.page ?? 0).round();
+      if (state.currentIndex != page) {
+        emit(state.setCurrent(page));
+      }
     });
+  }
+
+  void hide(bool isHide) {
+    emit(state.setHide(isHide));
+  }
+
+  void switchHide() {
+    emit(state.setHide(!state.isHide));
+  }
+
+  void hideDetected(String name, bool isHide) {
+    if (isHide) {
+      emit(state.hideDetection(name));
+    } else {
+      emit(state.unhideDetection(name));
+    }
   }
 }
 
 class ImageGalleryListPage extends StatelessWidget {
+  final int currentIndex;
   final List<GalleryImage> image;
 
   const ImageGalleryListPage({
     Key? key,
     required this.image,
+    required this.currentIndex,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return BlocProvider(
+      create: (_) => ImageGalleryViewerCubit(
+        image,
+        currentIndex: currentIndex,
+      ),
+      child: const ImageGalleryListView(),
+    );
+  }
+}
+
+class ImageGalleryListView extends StatefulWidget {
+  const ImageGalleryListView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<ImageGalleryListView> createState() => _ImageGalleryListViewState();
+}
+
+class _ImageGalleryListViewState extends State<ImageGalleryListView> {
+  late final _controller = PageController(
+    initialPage: context.read<ImageGalleryViewerCubit>().state.currentIndex,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final viewer = context.read<ImageGalleryViewerCubit>();
+    viewer.attach(_controller);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final list =
+        context.select((ImageGalleryViewerCubit value) => value.state.list);
+    final detection = context
+        .select((ImageGalleryViewerCubit value) => value.state.detectionHide);
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        toolbarHeight: 0,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () {
+            context.read<ImageGalleryViewerCubit>().switchHide();
+          },
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Positioned.fill(
+                child: PageView.builder(
+                  controller: _controller,
+                  itemBuilder: (context, index) {
+                    final item = list[index];
+                    return InteractiveViewer(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CustomPaint(
+                              foregroundPainter: DetectionPainter(item.detected,
+                                  hidden: detection),
+                              child: Image.memory(item.data)),
+                        ],
+                      ),
+                    );
+                  },
+                  itemCount: list.length,
+                ),
+              ),
+              Positioned.fill(
+                child: BlocBuilder<ImageGalleryViewerCubit, ImageGalleryPanel>(
+                  builder: (context, state) {
+                    if (state.isHide) {
+                      return SizedBox();
+                    }
+                    final current = state.current;
+                    final detected =
+                        current.detected.map((e) => e.name).toSet().toList();
+                    return Container(
+                      child: GestureDetector(
+                        onTap: () {
+                          // context.read<ImageGalleryViewerCubit>().hide(true);
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              color: Colors.black38,
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    icon: const Icon(
+                                      Icons.arrow_back_rounded,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${state.currentIndex + 1}/${list.length}',
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              color: Colors.black45,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  if (current.detected.isNotEmpty)
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 8,
+                                      children: [
+                                        for (var item in detected)
+                                          Chip(
+                                            label: Text(item),
+                                            onDeleted: () {
+                                              context
+                                                  .read<
+                                                      ImageGalleryViewerCubit>()
+                                                  .hideDetected(
+                                                      item,
+                                                      !detection
+                                                          .contains(item));
+                                            },
+                                            deleteIcon: detection.contains(item)
+                                                ? const Icon(
+                                                    Icons.visibility_off)
+                                                : const Icon(Icons.visibility),
+                                          )
+                                      ],
+                                    )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -212,8 +416,9 @@ class CreateRecipeShotPage extends StatelessWidget {
 
 class DetectionPainter extends CustomPainter {
   final List<DetectedObject>? detection;
+  final Set<String> hidden;
 
-  DetectionPainter(this.detection);
+  DetectionPainter(this.detection, {this.hidden = const {}});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -222,6 +427,9 @@ class DetectionPainter extends CustomPainter {
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     for (DetectedObject item in detection ?? []) {
+      if (hidden.contains(item.name)) {
+        continue;
+      }
       canvas.drawRect(
           Offset(item.x * size.width, item.y * size.height) &
               Size(item.width * size.width, item.height * size.height),

@@ -29,4 +29,5 @@ class DetectedObject with _$DetectedObject {
       y: json['rect']['y'],
     );
   }
+
 }
