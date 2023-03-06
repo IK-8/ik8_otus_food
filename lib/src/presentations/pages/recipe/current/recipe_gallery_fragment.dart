@@ -1,23 +1,42 @@
 import 'dart:io';
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ik8_otus_food/src/config/theme/main.dart';
+import 'package:ik8_otus_food/src/core/bloc/bloc.dart';
+import 'package:ik8_otus_food/src/data/models/local/gallery_image.dart';
 
+import '../../../../data/models/local/detected_object.dart';
 import '../../../blocs/recipe_gallery/create_recipe_shot.dart';
+import '../../../blocs/recipe_gallery/gallery_by_recipe.dart';
 
 class RecipeGalleryFragment extends StatelessWidget {
   const RecipeGalleryFragment({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final listState = context.watch<GalleryListByRecipeCubit>().state;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (listState.isLoading)
+          const SizedBox(
+            height: 150,
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        if (!listState.isLoading && listState.list.isNotEmpty)
+          SizedBox(
+            height: 150,
+            child: (ListView.builder(
+              itemBuilder: (context, index) {
+                var item = listState.list[index];
+                return Padding(
+                  padding: const EdgeInsets.all(2),
+                  child: Image.memory(item.data),
+                );
+              },
+              itemCount: listState.list.length,
+              scrollDirection: Axis.horizontal,
+            )),
+          ),
         ElevatedButton.icon(
           onPressed: () {
             context.read<CreateRecipeShotCubit>().createShot().then((value) {
@@ -25,8 +44,13 @@ class RecipeGalleryFragment extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => BlocProvider.value(
-                      value: context.read<CreateRecipeShotCubit>(),
+                    builder: (_) => MultiBlocProvider(
+                      providers: [
+                        BlocProvider.value(
+                            value: context.read<CreateRecipeShotCubit>()),
+                        BlocProvider.value(
+                            value: context.read<GalleryListByRecipeCubit>()),
+                      ],
                       child: const CreateRecipeShotPage(),
                     ),
                   ),
@@ -50,6 +74,83 @@ class RecipeGalleryFragment extends StatelessWidget {
   }
 }
 
+class ImageGalleryPanel {
+  final Set<String> detectionHide;
+  final List<GalleryImage> list;
+  final int currentIndex;
+
+  GalleryImage get current => list[currentIndex];
+
+  const ImageGalleryPanel({
+    this.currentIndex = 0,
+    this.detectionHide = const {},
+    required this.list,
+  });
+
+  ImageGalleryPanel hide(String name) {
+    return copyWith(
+      detectionHide: {...detectionHide, name},
+    );
+  }
+
+  ImageGalleryPanel unhide(String name) {
+    return copyWith(
+      detectionHide: {...detectionHide}..remove(name),
+    );
+  }
+
+  ImageGalleryPanel setCurrent(int index) {
+    return copyWith(currentIndex: index);
+  }
+
+  ImageGalleryPanel copyWith({
+    Set<String>? detectionHide,
+    int? currentIndex,
+  }) {
+    return ImageGalleryPanel(
+      list: list,
+      currentIndex: currentIndex ?? this.currentIndex,
+      detectionHide: detectionHide ?? this.detectionHide,
+    );
+  }
+
+  bool isHide(DetectedObject obj) {
+    return detectionHide.contains(obj.name);
+  }
+}
+
+class ImageGalleryViewerCubit extends Cubit<ImageGalleryPanel> {
+  ImageGalleryViewerCubit(
+    List<GalleryImage> list, {
+    int currentIndex = 0,
+  }) : super(
+          ImageGalleryPanel(
+            currentIndex: currentIndex,
+            list: list,
+          ),
+        );
+
+  void attach(PageController controller) {
+    controller.addListener(() {
+
+    });
+  }
+}
+
+class ImageGalleryListPage extends StatelessWidget {
+  final List<GalleryImage> image;
+
+  const ImageGalleryListPage({
+    Key? key,
+    required this.image,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
 class CreateRecipeShotPage extends StatelessWidget {
   const CreateRecipeShotPage({Key? key}) : super(key: key);
 
@@ -69,239 +170,10 @@ class CreateRecipeShotPage extends StatelessWidget {
               child: Stack(
                 // fit: StackFit.loose,
                 children: [
-                  // Positioned.fill(
-                  //   child: LayoutBuilder(builder: (context, size) {
-                  //     return Image.file(
-                  //       File(image.path),
-                  //       frameBuilder:
-                  //           (context, child, frame, wasSynchronouslyLoaded) {
-                  //         final image = (child as Semantics).child as RawImage;
-                  //         final width = image.image?.width;
-                  //         final height = image.image?.height;
-                  //         final w = width == null ? size.maxWidth : size.maxWidth;
-                  //         final h = height == null ? size.maxHeight : size.maxHeight;
-                  //         return Stack(
-                  //           fit: StackFit.expand,
-                  //           children: [
-                  //             FittedBox(fit: BoxFit.contain, child: child),
-                  //             if (detection != null &&
-                  //                 width != null &&
-                  //                 height != null)
-                  //               Positioned.fill(
-                  //                 child: Builder(
-                  //                   builder: (context) {
-                  //                     List<Widget> children = [];
-                  //                     for (var item in detection) {
-                  //                       children.add(
-                  //                         Positioned(
-                  //                           top: h * item.y,
-                  //                           left: w * item.x,
-                  //                           child: Container(
-                  //                             decoration: BoxDecoration(
-                  //                               border: Border.all(
-                  //                                 color: primaryColor,
-                  //                                 width: 2,
-                  //                               ),
-                  //                             ),
-                  //                             height: item.height * h,
-                  //                             width: item.width * w,
-                  //                           ),
-                  //                         ),
-                  //                       );
-                  //                       children.add(Positioned(
-                  //                           bottom: h * (1 - item.y),
-                  //                           left: w * item.x,
-                  //                           child: Container(
-                  //                             padding: const EdgeInsets.all(2),
-                  //                             color: primaryColor,
-                  //                             child: Text(
-                  //                               item.name,
-                  //                               style: const TextStyle(
-                  //                                 color: Colors.white,
-                  //                               ),
-                  //                             ),
-                  //                           )));
-                  //                     }
-                  //                     return Stack(
-                  //                       children: children,
-                  //                     );
-                  //                   },
-                  //                 ),
-                  //               )
-                  //           ],
-                  //         );
-                  //       },
-                  //       // fit: BoxFit.fitWidth,
-                  //     );
-                  //   }),
-                  // ),
-                  //-------
                   CustomPaint(
                     foregroundPainter: DetectionPainter(detection),
                     child: Image.file(File(image.path)),
                   ),
-                  //-----
-                  // FittedBox(
-                  //   fit: BoxFit.contain,
-                  //   child: Stack(
-                  //     children: [
-                  //       Image.file(
-                  //         File(image.path),
-                  //         frameBuilder:
-                  //             (context, child, frame, wasSynchronouslyLoaded) {
-                  //           final image =
-                  //               (child as Semantics).child as RawImage;
-                  //           final width = image.image!.width;
-                  //           final height = image.image!.height;
-                  //           return Stack(
-                  //             children: [
-                  //               BoxFit(child: child),
-                  //               if (detection != null)
-                  //                 Positioned.fill(
-                  //                   child: Builder(
-                  //                     builder: (context) {
-                  //                       List<Widget> children = [];
-                  //                       for (var item in detection) {
-                  //                         children.add(
-                  //                           Positioned(
-                  //                             top: height * item.y,
-                  //                             left: width * item.x,
-                  //                             child: Container(
-                  //                               decoration: BoxDecoration(
-                  //                                 border: Border.all(
-                  //                                   color: primaryColor,
-                  //                                   width: 2,
-                  //                                 ),
-                  //                               ),
-                  //                               height: item.height * height,
-                  //                               width: item.width * width,
-                  //                               // child: Column(
-                  //                               //   crossAxisAlignment:
-                  //                               //       CrossAxisAlignment.start,
-                  //                               //   children: [
-                  //                               //     Container(
-                  //                               //       padding: const EdgeInsets.all(2),
-                  //                               //       color: primaryColor,
-                  //                               //       child: Text(
-                  //                               //         item.name,
-                  //                               //         style: const TextStyle(
-                  //                               //           color: Colors.white,
-                  //                               //         ),
-                  //                               //       ),
-                  //                               //     )
-                  //                               //   ],
-                  //                               // ),
-                  //                             ),
-                  //                           ),
-                  //                         );
-                  //                         children.add(Positioned(
-                  //                             bottom: height * (1 - item.y),
-                  //                             left: width * item.x,
-                  //                             child: Container(
-                  //                               padding: const EdgeInsets.all(2),
-                  //                               color: primaryColor,
-                  //                               child: Text(
-                  //                                 item.name,
-                  //                                 style: const TextStyle(
-                  //                                   color: Colors.white,
-                  //                                 ),
-                  //                               ),
-                  //                             )));
-                  //                       }
-                  //                       return Stack(
-                  //                         children: children,
-                  //                       );
-                  //                     },
-                  //                   ),
-                  //                 )
-                  //             ],
-                  //           );
-                  //         },
-                  //         // fit: BoxFit.fitWidth,
-                  //       ),
-                  //       if (detection != null)
-                  //         Positioned.fill(
-                  //           child: LayoutBuilder(
-                  //             builder: (context, size) {
-                  //               var width = size.maxWidth;
-                  //               var height = size.maxHeight;
-                  //               List<Widget> children = [];
-                  //               for (var item in detection) {
-                  //                 children.add(
-                  //                   Positioned(
-                  //                     top: height * item.y,
-                  //                     left: width * item.x,
-                  //                     child: Container(
-                  //                       decoration: BoxDecoration(
-                  //                         border: Border.all(
-                  //                           color: primaryColor,
-                  //                           width: 2,
-                  //                         ),
-                  //                       ),
-                  //                       height: item.height * height,
-                  //                       width: item.width * width,
-                  //                       // child: Column(
-                  //                       //   crossAxisAlignment:
-                  //                       //       CrossAxisAlignment.start,
-                  //                       //   children: [
-                  //                       //     Container(
-                  //                       //       padding: const EdgeInsets.all(2),
-                  //                       //       color: primaryColor,
-                  //                       //       child: Text(
-                  //                       //         item.name,
-                  //                       //         style: const TextStyle(
-                  //                       //           color: Colors.white,
-                  //                       //         ),
-                  //                       //       ),
-                  //                       //     )
-                  //                       //   ],
-                  //                       // ),
-                  //                     ),
-                  //                   ),
-                  //                 );
-                  //                 children.add(Positioned(
-                  //                     bottom: height * (1 - item.y),
-                  //                     left: width * item.x,
-                  //                     child: Container(
-                  //                       padding: const EdgeInsets.all(2),
-                  //                       color: primaryColor,
-                  //                       child: Text(
-                  //                         item.name,
-                  //                         style: const TextStyle(
-                  //                           color: Colors.white,
-                  //                         ),
-                  //                       ),
-                  //                     )));
-                  //               }
-                  //               return Stack(
-                  //                 children: children,
-                  //               );
-                  //             },
-                  //           ),
-                  //         )
-                  //       // Positioned.fill(
-                  //       //   child: Container(
-                  //       //     color: Colors.red.withOpacity(0.5),
-                  //       //   ),
-                  //       // )
-                  //     ],
-                  //   ),
-                  // ),
-                  // Positioned.fill(
-                  //   child: Image.file(File(image.path), fit: BoxFit.contain,
-                  //       frameBuilder:
-                  //           (context, child, frame, wasSynchronouslyLoaded) {
-                  //     return Stack(
-                  //       fit: StackFit.loose,
-                  //       children: [
-                  //         child,
-                  //         Container(
-                  //           color: Colors.red.withOpacity(0.5),
-                  //         )
-                  //       ],
-                  //     );
-                  //   }),
-                  // ),
                   if (detection == null)
                     Positioned.fill(
                       child: Container(
@@ -321,7 +193,14 @@ class CreateRecipeShotPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: () async {
+                if (image != null) {
+                  context.read<GalleryListByRecipeCubit>().save(
+                      data: await image.readAsBytes(),
+                      detected: detection ?? []);
+                  Navigator.pop(context);
+                }
+              },
               child: const Text('Сохранить'),
             ),
           )
@@ -332,18 +211,17 @@ class CreateRecipeShotPage extends StatelessWidget {
 }
 
 class DetectionPainter extends CustomPainter {
-  final List<DetectedClass>? detection;
+  final List<DetectedObject>? detection;
 
   DetectionPainter(this.detection);
 
   @override
   void paint(Canvas canvas, Size size) {
-    print(size);
     Paint paint = Paint()
       ..color = primaryColor
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
-    for (DetectedClass item in detection ?? []) {
+    for (DetectedObject item in detection ?? []) {
       canvas.drawRect(
           Offset(item.x * size.width, item.y * size.height) &
               Size(item.width * size.width, item.height * size.height),

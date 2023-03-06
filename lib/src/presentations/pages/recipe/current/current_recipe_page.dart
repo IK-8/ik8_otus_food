@@ -12,6 +12,7 @@ import '../../../../config/route/slide_and_fade_reverse_transition.dart';
 import '../../../../config/theme/main.dart';
 import '../../../blocs/recipe/recipe_timer_cubit.dart';
 import '../../../blocs/recipe_gallery/create_recipe_shot.dart';
+import '../../../blocs/recipe_gallery/gallery_by_recipe.dart';
 import '../../../widgets/widgets.dart';
 import 'comment_field.dart';
 import 'comment_list.dart';
@@ -25,8 +26,8 @@ class CurrentRecipePage extends StatefulWidget {
 
   const CurrentRecipePage(this.data, {Key? key}) : super(key: key);
 
-  static Route route(Recipe data)  {
-    final page =  CurrentRecipePage(data);
+  static Route route(Recipe data) {
+    final page = CurrentRecipePage(data);
     return slideAndReverseFadeTransitionRoute(page);
   }
 
@@ -48,16 +49,14 @@ class _CurrentRecipePageState extends State<CurrentRecipePage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<RecipeCommentsCubit>(
-            create: (_) => injector(param1: widget.data.id)
-            ..update()
-            ),
+            create: (_) => injector(param1: widget.data.id)..update()),
         BlocProvider<RecipeInfoCubit>(
-            create: (_) => injector(param1: widget.data)
-            ..refreshSteps()
-            ),
+            create: (_) => injector(param1: widget.data)..refreshSteps()),
         BlocProvider<CreateRecipeShotCubit>(
-            create: (_) => injector(param1: widget.data.id)
-            ),
+            create: (_) => injector(param1: widget.data.id)),
+        BlocProvider<GalleryListByRecipeCubit>(
+          create: (_) => injector(param1: widget.data.id)..pull(),
+        ),
         BlocProvider<RecipeTimerCubit>(
           create: (_) {
             _timerCubit?.dispose();

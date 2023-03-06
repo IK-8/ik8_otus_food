@@ -8,10 +8,12 @@ import 'injector/recipe.dart';
 final injector = GetIt.instance;
 
 Future<void> initializeDependencies() async {
-  try {
+  // try {
     await initializeCoreDependencies(injector);
     await initializeRecipe(injector);
     await initializeGalleryDependencies(injector);
     await initializeRecipeComments(injector);
-  } catch (_) {}
+  // } catch (_) {
+  //   print(_);
+  // }
 }

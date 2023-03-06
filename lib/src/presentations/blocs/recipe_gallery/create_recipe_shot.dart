@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:ik8_otus_food/src/data/models/local/detected_object.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter_tflite/flutter_tflite.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,7 +14,7 @@ import '../../../core/bloc/bloc.dart';
 
 class RecipeShotData {
   final XFile? image;
-  final List<DetectedClass>? detection;
+  final List<DetectedObject>? detection;
 
   RecipeShotData({this.image, this.detection});
 }
@@ -23,6 +24,10 @@ class CreateRecipeShotCubit extends RequestStateCubit<RecipeShotData> {
   final dynamic recipeId;
 
   CreateRecipeShotCubit(this.recipeId);
+
+  void clear() {
+    emit(const RequestStateInfo());
+  }
 
   Future<RecipeShotData?> createShot({
     ImageSource source = ImageSource.camera,
@@ -54,9 +59,9 @@ class CreateRecipeShotCubit extends RequestStateCubit<RecipeShotData> {
       numResultsPerClass: 5,
     );
     print(recognitions);
-    List<DetectedClass> detection = [];
+    List<DetectedObject> detection = [];
     for (var item in recognitions ?? []) {
-      final detected = DetectedClass.fromJson(item);
+      final detected = DetectedObject.fromJson(item);
       if (detected.confidence >= 0.5) {
         detection.add(detected);
       }
@@ -85,29 +90,29 @@ class CreateRecipeShotCubit extends RequestStateCubit<RecipeShotData> {
 // y: 0.22690117359161377},
 // confidenceInClass: 0.62109375,
 // detectedClass: dining table}
-class DetectedClass {
-  final String name;
-  final double confidence;
-  final double width, height;
-  final double x, y;
-
-  const DetectedClass(
-    this.name,
-    this.confidence, {
-    required this.width,
-    required this.height,
-    required this.x,
-    required this.y,
-  });
-
-  factory DetectedClass.fromJson(Map<dynamic, dynamic> json) {
-    return DetectedClass(
-      json['detectedClass'],
-      json['confidenceInClass'],
-      width: json['rect']['w'],
-      height: json['rect']['h'],
-      x: json['rect']['x'],
-      y: json['rect']['y'],
-    );
-  }
-}
+// class DetectedClass {
+//   final String name;
+//   final double confidence;
+//   final double width, height;
+//   final double x, y;
+//
+//   const DetectedClass(
+//     this.name,
+//     this.confidence, {
+//     required this.width,
+//     required this.height,
+//     required this.x,
+//     required this.y,
+//   });
+//
+//   factory DetectedClass.fromJson(Map<dynamic, dynamic> json) {
+//     return DetectedClass(
+//       json['detectedClass'],
+//       json['confidenceInClass'],
+//       width: json['rect']['w'],
+//       height: json['rect']['h'],
+//       x: json['rect']['x'],
+//       y: json['rect']['y'],
+//     );
+//   }
+// }
