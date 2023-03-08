@@ -1,40 +1,57 @@
 import 'dart:async';
 
-import 'package:ik8_otus_food/src/data/datasources/assets/steps.dart';
 import 'package:ik8_otus_food/src/domain/entities/recipe.dart';
 import 'package:ik8_otus_food/src/domain/entities/step.dart';
 
 import '../../../core/service/recipe/recipe_timer_service.dart';
 import '../../../domain/entities/recipe_info.dart';
 import '../../../domain/repositories/recipe_repository.dart';
-import '../../datasources/assets/recipe.dart';
+import '../../datasources/api/recipe_api_service.dart';
+import '../../datasources/api/steps_api_service.dart';
 
 class RecipeRepositoryImpl extends RecipeRepository {
   final RecipeTimerService _timerService;
-  final AssetRecipeService _service;
-  final AssetRecipeStepService _stepService;
+  final RecipeApiService _api;
+  final StepsApiService _stepsApi;
 
-  RecipeRepositoryImpl(this._service, this._stepService, this._timerService);
+  RecipeRepositoryImpl(
+    this._timerService,
+    this._api,
+    this._stepsApi,
+  );
 
   @override
-  List<Recipe> get all => _service.all;
+  void getAll({
+    required Function(List<Recipe> list) onResponse,
+    required Function(String? error) onError,
+  }) {
+    _api.getRecipeList(
+      onError: onError,
+      onResponse: (list) {
+        onResponse(list);
+      },
+      onConnectionError: (cache) {
+        onResponse(cache);
+      },
+    );
+  }
 
   @override
   void setFavorite(
-    int id, {
+    dynamic id, {
     required bool isFavorite,
     required Function(Recipe recipe) onChange,
   }) {
-    _service.setFavorite(id, isFavorite: isFavorite, onChange: onChange);
+    _api.setFavorite(id, isFavorite: isFavorite, onChange: onChange);
   }
 
   @override
   void start(
-    int id, {
+    dynamic id, {
     required bool isStarted,
     required Function(Recipe recipe, List<RecipeStep> steps) onChange,
   }) {
-    _service.start(
+    _api.start(
       id,
       isStarted: isStarted,
       onChange: (recipe, steps) {
@@ -43,24 +60,24 @@ class RecipeRepositoryImpl extends RecipeRepository {
         } else {
           _timerService.stop(id);
         }
-        onChange(recipe,steps);
+        onChange(recipe, steps);
       },
     );
   }
 
   @override
-  RecipeInfo infoById(int id) {
-    return _service.getInfo(id);
+  RecipeInfo infoById(dynamic id) {
+    return _api.getInfo(id);
   }
 
   @override
   void setStepChecked(
-    int id, {
-    required int recipeId,
+    dynamic id, {
+    required dynamic recipeId,
     required bool isChecked,
     required Function(List<RecipeStep> steps) onChange,
   }) {
-    return _stepService.setStepChecked(
+    return _stepsApi.setStepChecked(
       id,
       isChecked: isChecked,
       onChange: onChange,
@@ -68,19 +85,19 @@ class RecipeRepositoryImpl extends RecipeRepository {
   }
 
   @override
-  List<RecipeStep> recipeSteps(int recipeId) {
-    return _stepService.byRecipe(recipeId);
+  List<RecipeStep> recipeSteps(dynamic recipeId) {
+    return _stepsApi.byRecipe(recipeId);
   }
 
   @override
   StreamSubscription<List<Recipe>> subscribeList(
       {required Function(List<Recipe> list) onData}) {
-    return _service.subscribeList(onData: onData);
+    return _api.subscribeList(onData: onData);
   }
 
   @override
   StreamSubscription<bool> subscribeActiveTimer({
-    required int recipeId,
+    required dynamic recipeId,
     required void Function(TimerService? activeService) onChange,
   }) {
     onChange(_timerService.idTimerMap[recipeId]);

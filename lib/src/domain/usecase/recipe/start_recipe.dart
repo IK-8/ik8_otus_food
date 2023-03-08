@@ -9,7 +9,7 @@ class StartRecipeUseCase {
   StartRecipeUseCase(this._repository);
 
   call(
-      {required int id,
+      {required dynamic id,
       required bool isStarted,
       required Function(Recipe recipe, List<RecipeStep> steps) onChange}) {
     _repository.start(id, isStarted: isStarted, onChange: onChange);

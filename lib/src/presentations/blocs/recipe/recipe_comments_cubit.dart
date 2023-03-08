@@ -5,7 +5,7 @@ import '../../../domain/entities/comment.dart';
 import '../../../domain/usecase/recipe_comments/get_all_comments_by_recipe.dart';
 
 class RecipeCommentsCubit extends RequestStateCubit<List<RecipeComment>> {
-  final int recipeId;
+  final dynamic recipeId;
   final GetAllCommentsByRecipeUseCase _get;
   final CreateRecipeCommentUseCase _create;
 
@@ -15,12 +15,12 @@ class RecipeCommentsCubit extends RequestStateCubit<List<RecipeComment>> {
     required this.recipeId,
   }) : super();
 
-  update() {
+  Future<void> update() async {
     emit(state.setLoading());
     refresh();
   }
 
-  refresh() {
+  Future<void> refresh() async {
     final list = _get(recipeId);
     emit(state.setFull(list));
   }

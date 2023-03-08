@@ -37,7 +37,7 @@ class RecipeItem extends StatelessWidget {
                     bottomLeft: Radius.circular(4)),
                 child: AspectRatio(
                   aspectRatio: 1,
-                  child: Image.asset(
+                  child: Image.network(
                     item.image,
                     fit: BoxFit.cover,
                     errorBuilder: foodErrorBuilder,

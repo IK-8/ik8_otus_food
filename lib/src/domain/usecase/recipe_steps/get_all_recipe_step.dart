@@ -6,7 +6,7 @@ class GetAllRecipeStepUseCase {
 
   GetAllRecipeStepUseCase(this._repository);
 
-  List<RecipeStep> call(int recipeId) {
+  List<RecipeStep> call(dynamic recipeId) {
     return _repository.recipeSteps(recipeId);
   }
 }

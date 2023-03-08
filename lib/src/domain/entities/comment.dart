@@ -1,6 +1,6 @@
 abstract class RecipeComment {
-  final int id;
-  final int recipeId;
+  final dynamic id;
+  final dynamic recipeId;
   final String text;
   final DateTime time;
 

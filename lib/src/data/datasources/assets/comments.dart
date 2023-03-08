@@ -5,7 +5,7 @@ class AssetRecipeCommentsService {
   static final _all = <AssetRecipeComment>[];
 
   void create(
-      {required int recipeId,
+      {required dynamic recipeId,
       required String text,
       required Function(AssetRecipeComment created) onCreate}) {
     final created = AssetRecipeComment(
@@ -15,6 +15,6 @@ class AssetRecipeCommentsService {
     onCreate(created);
   }
 
-  List<AssetRecipeComment> byRecipe(int recipeId) =>
+  List<AssetRecipeComment> byRecipe(dynamic recipeId) =>
       _all.where((element) => element.recipeId == recipeId).toList();
 }

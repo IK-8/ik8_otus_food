@@ -7,36 +7,43 @@ import '../entities/recipe.dart';
 import '../entities/recipe_info.dart';
 
 abstract class RecipeRepository {
-  List<Recipe> get all;
+  // List<Recipe> get all;
+  void getAll({
+
+    required Function(List<Recipe> list) onResponse,
+    required Function(String? error) onError,
+  });
+
+  // List<Recipe>
 
   StreamSubscription<List<Recipe>> subscribeList(
       {required Function(List<Recipe> list) onData});
 
   void setFavorite(
-    int id, {
+      dynamic id, {
     required bool isFavorite,
     required Function(Recipe recipe) onChange,
   });
 
   void start(
-    int id, {
+      dynamic id, {
     required bool isStarted,
     required Function(Recipe recipe, List<RecipeStep> steps) onChange,
   });
 
-  RecipeInfo infoById(int id);
+  RecipeInfo infoById(dynamic id);
 
   void setStepChecked(
-    int id, {
-    required int recipeId,
+    dynamic id, {
+    required dynamic recipeId,
     required bool isChecked,
     required Function(List<RecipeStep> steps) onChange,
   });
 
-  List<RecipeStep> recipeSteps(int recipeId);
+  List<RecipeStep> recipeSteps(dynamic recipeId);
 
   StreamSubscription<bool> subscribeActiveTimer({
-    required int recipeId,
+    required dynamic recipeId,
     required void Function(TimerService? activeService) onChange,
   });
 }

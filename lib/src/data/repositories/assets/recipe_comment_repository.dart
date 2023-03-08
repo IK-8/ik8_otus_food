@@ -9,13 +9,13 @@ class CommentRepositoryImpl extends CommentRepository {
   CommentRepositoryImpl(this._service);
 
   @override
-  List<RecipeComment> byRecipe(int id) {
+  List<RecipeComment> byRecipe(dynamic id) {
     return _service.byRecipe(id);
   }
 
   @override
   void createComment(
-      {required int recipeId,
+      {required dynamic recipeId,
       required String text,
       required Function(RecipeComment created) onCreate}) {
     _service.create(recipeId: recipeId, text: text,onCreate: onCreate);

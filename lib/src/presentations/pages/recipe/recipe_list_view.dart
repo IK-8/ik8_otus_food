@@ -6,13 +6,30 @@ import '../../blocs/recipe/recipe_list_cubit.dart';
 import '../../widgets/widgets.dart';
 import 'current/current_recipe_page.dart';
 
-class RecipeListPage extends StatelessWidget {
+class RecipeListPage extends StatefulWidget {
   const RecipeListPage({Key? key}) : super(key: key);
+
+  @override
+  State<RecipeListPage> createState() => _RecipeListPageState();
+}
+
+class _RecipeListPageState extends State<RecipeListPage> {
+  RecipeListCubit? _bloc;
+
+  @override
+  void dispose() {
+    _bloc?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<RecipeListCubit>(
-      create: (_) => injector(),
+      create: (_) {
+        _bloc?.dispose();
+        _bloc = injector()..pull();
+        return _bloc!;
+      },
       child: const RecipeListView(),
     );
   }
@@ -23,7 +40,7 @@ class RecipeListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final list = context.watch<RecipeListCubit>().state;
+    final state = context.watch<RecipeListCubit>().state;
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
@@ -31,26 +48,50 @@ class RecipeListView extends StatelessWidget {
         elevation: 0,
       ),
       backgroundColor: backgroundColor,
-      body: SafeArea(
-        child: ListView.builder(
-          itemCount: list.length,
-          // cacheExtent: 5000,
-          addAutomaticKeepAlives: false,
-          physics: const TopBouncingScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            var item = list[index];
-            return InkWell(
-              onTap: () {
-                Navigator.push(context, CurrentRecipePage.route(item));
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 12.0, horizontal: 16.0),
-                child: RecipeItem(item),
-              ),
-            );
-          },
+      body: state.when(
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
         ),
+        full: () => SafeArea(
+          child: ListView.builder(
+            itemCount: state.list.length,
+            addAutomaticKeepAlives: false,
+            physics: const TopBouncingScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              var item = state.list[index];
+              return InkWell(
+                onTap: () {
+                  Navigator.push(context, CurrentRecipePage.route(item));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 16.0),
+                  child: RecipeItem(item),
+                ),
+              );
+            },
+          ),
+        ),
+        error: () => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                state.error ?? 'Ошибка',
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  context.read<RecipeListCubit>().pull();
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Перезагрузить'),
+              ),
+            ],
+          ),
+        ),
+        other: () => const SizedBox(),
       ),
     );
   }

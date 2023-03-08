@@ -8,8 +8,8 @@ class SetCheckedRecipeStepUseCase {
   SetCheckedRecipeStepUseCase(this._repository);
 
   call(
-      {required int id,
-      required int recipeId,
+      {required dynamic id,
+      required dynamic recipeId,
       required bool isChecked,
       required Function(List<RecipeStep> recipe) onChange}) {
     _repository.setStepChecked(id,

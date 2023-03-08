@@ -1,6 +1,6 @@
 import '../../../domain/entities/step.dart';
 
-class AssetRecipeStep extends RecipeStep {
+class AssetRecipeStep extends RecipeStepData {
   const AssetRecipeStep(
       {required super.id,
       required super.recipeId,

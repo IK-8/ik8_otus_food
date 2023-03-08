@@ -8,7 +8,7 @@ import '../../../widgets/recipe_step/recipe_step_item.dart';
 class StepList extends StatelessWidget {
   const StepList({Key? key}) : super(key: key);
 
-  onCheckedStep(BuildContext context, int stepId, bool isChecked) {
+  onCheckedStep(BuildContext context, dynamic stepId, bool isChecked) {
     context.read<RecipeInfoCubit>().checkStep(
           stepId,
           isChecked,

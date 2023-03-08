@@ -10,7 +10,7 @@ class SubscribeRecipeTimerUseCase {
   SubscribeRecipeTimerUseCase(this._repository);
 
   StreamSubscription<bool> call({
-    required int recipeId,
+    required dynamic recipeId,
     required Function(TimerService? active) onChange,
   }) {
     return _repository.subscribeActiveTimer(

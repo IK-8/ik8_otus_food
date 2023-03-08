@@ -4,26 +4,26 @@ export '../stream_value.dart';
 export '../timer_service.dart';
 
 class RecipeTimerService {
-  final Map<int, TimerService> _idTimerMap = {};
+  final Map<dynamic, TimerService> _idTimerMap = {};
 
-  Map<int, TimerService> get idTimerMap => _idTimerMap;
+  Map<dynamic, TimerService> get idTimerMap => _idTimerMap;
 
-  final StreamValue<Set<int>> _idsValue = StreamValue({});
+  final StreamValue<Set<dynamic>> _idsValue = StreamValue({});
 
-  StreamValue<Set<int>> get idsValue => _idsValue;
+  StreamValue<Set<dynamic>> get idsValue => _idsValue;
 
   updateIds() {
     _idsValue.value = _idTimerMap.keys.toSet();
   }
 
-  start(int id, int seconds) {
+  start(dynamic id, int seconds) {
     final currentTimer = _idTimerMap[id];
     currentTimer?.dispose();
     _idTimerMap[id] = TimerService(Duration(seconds: seconds));
     updateIds();
   }
 
-  stop(int id) {
+  stop(dynamic id) {
     final currentTimer = _idTimerMap[id];
     currentTimer?.dispose();
     _idTimerMap.remove(id);

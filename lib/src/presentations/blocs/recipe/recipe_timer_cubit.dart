@@ -6,7 +6,7 @@ import '../../../core/service/timer_service.dart';
 import '../../../domain/usecase/recipe/subscribe_recipe_timer.dart';
 
 class RecipeTimerCubit extends Cubit<Duration?> {
-  final int id;
+  final dynamic id;
   final SubscribeRecipeTimerUseCase _subscribeRecipeTimer;
 
   RecipeTimerCubit(
@@ -16,7 +16,7 @@ class RecipeTimerCubit extends Cubit<Duration?> {
   StreamSubscription<bool>? _timerSubscription;
   StreamSubscription<Duration>? _durationSubscription;
 
-  void initialize() {
+  Future<void> initialize() async {
     _timerSubscription = _subscribeRecipeTimer(
         recipeId: id,
         onChange: (timer) {
@@ -27,6 +27,7 @@ class RecipeTimerCubit extends Cubit<Duration?> {
             emit(null);
           }
         });
+
   }
 
   void _subscribeTimer(TimerService timer) {

@@ -10,7 +10,7 @@ class RecipeInfo {
     this.steps = const [],
   });
 
-  int get id => recipe.id;
+  dynamic get id => recipe.id;
 
   RecipeInfo copyWith({Recipe? recipe, List<RecipeStep>? steps}) {
     return RecipeInfo(

@@ -6,6 +6,9 @@ import '../../../l10n/extension.dart';
 extension MeasureLocalizationEx on AppLocalizations {
   String ingredientMeasureFormat(RecipeIngredient ingredient) {
     if (ingredient.count == 0) {
+      if (ingredient.product.measure.title != null) {
+        return ingredient.product.measure.title!;
+      }
       return toTaste;
     }
     String countFormat = ingredient.count.fractionFormat;
@@ -20,7 +23,7 @@ extension MeasureLocalizationEx on AppLocalizations {
   }
 
   String measureFormat(double count, Measure measure) {
-    count = count ;
+    count = count;
     switch (measure) {
       case Measure.wt:
         var kgCount = count.floor();
@@ -33,30 +36,47 @@ extension MeasureLocalizationEx on AppLocalizations {
       case Measure.tsp:
         return count.isFractional
             ? few_tsp
-            : Intl.plural(count.floor(),
+            : Intl.plural(
+                count.floor(),
                 locale: localeName,
                 other: few_tbs,
                 many: many_tsp,
                 one: one_tsp,
-                few: few_tsp);
+                few: few_tsp,
+              );
       case Measure.tbs:
         return count.isFractional
             ? few_tbs
-            : Intl.plural(count.floor(),
+            : Intl.plural(
+                count.floor(),
                 locale: localeName,
                 other: few_tbs,
                 many: many_tsp,
                 one: one_tbs,
-                few: few_tbs);
+                few: few_tbs,
+              );
       case Measure.clove:
         return count.isFractional
             ? few_clove
-            : Intl.plural(count.floor(),
-            locale: localeName,
+            : Intl.plural(
+                count.floor(),
+                locale: localeName,
                 other: few_clove,
                 one: one_clove,
                 many: many_clove,
-                few: few_clove);
+                few: few_clove,
+              );
+      case Measure.cup:
+        return count.isFractional
+            ? few_cup
+            : Intl.plural(
+                count.floor(),
+                locale: localeName,
+                other: few_cup,
+                one: one_cup,
+                many: many_cup,
+                few: few_cup,
+              );
     }
   }
 }
