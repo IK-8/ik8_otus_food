@@ -27,7 +27,6 @@ class RecipeTimerCubit extends Cubit<Duration?> {
             emit(null);
           }
         });
-
   }
 
   void _subscribeTimer(TimerService timer) {

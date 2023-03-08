@@ -35,14 +35,10 @@ Route slideAndReverseFadeTransitionRoute(Widget child) {
   return PageRouteBuilder(
     pageBuilder: (BuildContext context, Animation<double> animation,
         Animation<double> secondaryAnimation) {
-      // print('a');
       return child;
     },
-    opaque: false,
-    // maintainState: true,
     transitionsBuilder: (BuildContext context, Animation<double> animation,
         Animation<double> secondaryAnimation, child) {
-      // final child = const Scaffold();
       if (toNext == null || toNext!) {
         if (animation.isCompleted) {
           toNext = toNext == null;

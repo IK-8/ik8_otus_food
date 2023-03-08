@@ -18,14 +18,16 @@ class TimerService {
   }
 
   Duration get currentDuration => _currentDuration.value;
+  void Function(dynamic service) onEnd;
 
-  TimerService(this.duration)
+  TimerService(this.duration, {required this.onEnd})
       : _currentDuration = StreamValue(duration),
         periodicDuration = const Duration(seconds: 1) {
     _timer = Timer.periodic(periodicDuration, (timer) {
       if (_currentDuration.value.isNegative ||
           _currentDuration.value == Duration.zero) {
-        timer.cancel();
+        onEnd(this);
+        return;
       }
       _currentDuration.value -= periodicDuration;
     });

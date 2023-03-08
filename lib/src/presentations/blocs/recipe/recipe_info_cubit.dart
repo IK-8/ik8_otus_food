@@ -53,10 +53,13 @@ class RecipeInfoCubit extends RequestStateCubit<RecipeInfo> {
   start(bool isStarted) {
     emit(state.setOperationLoading());
     _start(
-        id: id,
-        isStarted: isStarted,
-        onChange: (recipe, steps) {
+      id: id,
+      isStarted: isStarted,
+      onChange: (recipe, steps) {
+        if (!isClosed) {
           emit(state.setFull(RecipeInfo(recipe: recipe, steps: steps)));
-        });
+        }
+      },
+    );
   }
 }

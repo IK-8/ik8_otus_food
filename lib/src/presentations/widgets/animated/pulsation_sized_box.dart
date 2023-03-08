@@ -8,13 +8,13 @@ class AnimatedPulsationSizedBox extends ImplicitlyAnimatedWidget {
   final Widget child;
 
   const AnimatedPulsationSizedBox({
-  super.key,
-  required this.flag,
-  this.start = const Size.square(35),
-  this.half = const Size.square(37),
-  this.max = const Size.square(40),
-  required this.child,
-  super.duration = const Duration(seconds: 1),
+    super.key,
+    required this.flag,
+    this.start = const Size.square(35),
+    this.half = const Size.square(37),
+    this.max = const Size.square(40),
+    required this.child,
+    super.duration = const Duration(seconds: 1),
   });
 
   @override
@@ -24,7 +24,7 @@ class AnimatedPulsationSizedBox extends ImplicitlyAnimatedWidget {
 
 class _AnimatedPulsationSizedBoxState
     extends AnimatedWidgetBaseState<AnimatedPulsationSizedBox> {
-  Tween<bool>? _flag;
+  Tween<double>? _flag;
 
   @override
   void initState() {
@@ -33,14 +33,8 @@ class _AnimatedPulsationSizedBoxState
 
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
-    _flag = visitor(_flag, widget.flag,
-            (dynamic value) => Tween<bool>(begin: value as bool)) as Tween<bool>?;
-    // _color = visitor(
-    //     _color,
-    //     (widget.progress == 100
-    //         ? AppThemeColors.purpleColor
-    //         : AppThemeColors.amberColor),
-    //         (dynamic value) => ColorTween(begin: value as Color)) as ColorTween?;
+    _flag = visitor(_flag, widget.flag ? 0.0 : 1.0,
+        (dynamic value) => Tween<double>(begin: value)) as Tween<double>?;
   }
 
   @override
@@ -48,32 +42,23 @@ class _AnimatedPulsationSizedBoxState
     final Animation<Size> animation = TweenSequence<Size>(
       <TweenSequenceItem<Size>>[
         TweenSequenceItem<Size>(
-          tween: Tween<Size>(begin: widget.start, end: widget.max)
-          // .chain(CurveTween(curve: Curves.ease))
-          ,
+          tween: Tween<Size>(begin: widget.start, end: widget.max),
           weight: 2.0,
         ),
         TweenSequenceItem<Size>(
-          tween: Tween<Size>(begin: widget.max, end: widget.half)
-          // .chain(CurveTween(curve: Curves.ease))
-          ,
+          tween: Tween<Size>(begin: widget.max, end: widget.half),
           weight: 1.0,
         ),
         TweenSequenceItem<Size>(
-          tween: Tween<Size>(begin: widget.half, end: widget.max)
-          // .chain(CurveTween(curve: Curves.ease))
-          ,
+          tween: Tween<Size>(begin: widget.half, end: widget.max),
           weight: 1.0,
         ),
         TweenSequenceItem<Size>(
-          tween: Tween<Size>(begin: widget.half, end: widget.start)
-          // .chain(CurveTween(curve: Curves.ease))
-          ,
+          tween: Tween<Size>(begin: widget.half, end: widget.start),
           weight: 1.0,
         ),
       ],
     ).animate(controller);
-    // final Animation<double> animation = this.animation;
     final size = animation.value;
     return SizedBox.fromSize(
       size: size,

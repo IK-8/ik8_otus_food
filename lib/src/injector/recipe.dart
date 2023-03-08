@@ -2,7 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:ik8_otus_food/src/data/datasources/api/steps_api_service.dart';
 import 'package:ik8_otus_food/src/data/datasources/assets/recipe.dart';
 import 'package:ik8_otus_food/src/data/datasources/assets/steps.dart';
-import 'package:ik8_otus_food/src/data/repositories/assets/recipe_repository.dart';
+import 'package:ik8_otus_food/src/data/repositories/recipe_repository.dart';
 import 'package:ik8_otus_food/src/domain/repositories/recipe_repository.dart';
 import 'package:ik8_otus_food/src/domain/usecase/recipe/get_all_recipe.dart';
 import 'package:ik8_otus_food/src/domain/usecase/recipe/subscribe_recipe_list.dart';
