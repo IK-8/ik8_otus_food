@@ -23,7 +23,6 @@ class RecipeItem extends StatelessWidget {
           ),
         ],
       ),
-      // elevation: 2.5,
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -37,10 +36,29 @@ class RecipeItem extends StatelessWidget {
                     bottomLeft: Radius.circular(4)),
                 child: AspectRatio(
                   aspectRatio: 1,
-                  child: Image.network(
-                    item.image,
-                    fit: BoxFit.cover,
-                    errorBuilder: foodErrorBuilder,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.network(
+                        item.image,
+                        fit: BoxFit.cover,
+                        errorBuilder: foodErrorBuilder,
+                      ),
+                      if (item.isFavorite)
+                        Positioned(
+                          left: 5,
+                          top: 5,
+                          child: SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: Opacity(
+                              opacity: 0.9,
+                              child:
+                                  Image.asset('assets/animation/checked.png'),
+                            ),
+                          ),
+                        )
+                    ],
                   ),
                 ),
               ),
