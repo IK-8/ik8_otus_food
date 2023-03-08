@@ -20,8 +20,7 @@ class RecipeModel extends RecipeData {
       image: json['strMealThumb'],
       title: json['strMeal'],
       ingredients: IngredientModel.fromRecipe(json),
-      seconds: 5
-      // seconds: Random().nextInt(60) * 60,
+      seconds: Random().nextInt(60) * 60,
     );
   }
 
