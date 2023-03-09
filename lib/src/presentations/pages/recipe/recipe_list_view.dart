@@ -6,14 +6,30 @@ import '../../blocs/recipe/recipe_list_cubit.dart';
 import '../../widgets/widgets.dart';
 import 'current/current_recipe_page.dart';
 
-class RecipeListPage extends StatefulWidget {
+class RecipeListPage extends StatelessWidget {
   const RecipeListPage({Key? key}) : super(key: key);
 
   @override
-  State<RecipeListPage> createState() => _RecipeListPageState();
+  Widget build(BuildContext context) {
+    return const RecipeListProvider(
+      child: RecipeListView(),
+    );
+  }
 }
 
-class _RecipeListPageState extends State<RecipeListPage> {
+class RecipeListProvider extends StatefulWidget {
+  final Widget child;
+
+  const RecipeListProvider({
+    Key? key,
+    required this.child,
+  }) : super(key: key);
+
+  @override
+  State<RecipeListProvider> createState() => _RecipeListProviderState();
+}
+
+class _RecipeListProviderState extends State<RecipeListProvider> {
   RecipeListCubit? _bloc;
 
   @override
@@ -30,7 +46,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
         _bloc = injector()..pull();
         return _bloc!;
       },
-      child: const RecipeListView(),
+      child: widget.child,
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:ik8_otus_food/src/config/theme/main.dart';
 import 'package:ik8_otus_food/src/injector.dart';
 import 'l10n/extension.dart';
+import 'src/presentations/pages/menu/menu_page.dart';
 import 'src/presentations/pages/recipe/recipe_list_view.dart';
 
 void main() async {
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      home: const RecipeListPage(),
+      home: const UnauthMenuPage(),
     );
   }
 }
